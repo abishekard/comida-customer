@@ -24,6 +24,7 @@
             android:textStyle="bold" />
 
         <LinearLayout
+            android:id="@+id/my_orders"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -55,6 +56,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/notification"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -86,6 +88,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/about_us"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -116,6 +119,7 @@
                 android:src="@drawable/ic_arrow_right"/>
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/send_feedback"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"

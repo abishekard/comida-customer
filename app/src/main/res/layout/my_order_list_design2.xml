@@ -13,17 +13,11 @@
         android:background="@color/dirty_white3"
         >
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:src="@drawable/ic_cross_with_circle" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
             <TextView
@@ -31,7 +25,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="10dp"
-                android:text="Butter Paneer X 1"
+                android:text="Butter Paneer"
+                android:textSize="16sp"
                 android:textColor="@color/grey" />
 
             <Space
@@ -55,16 +50,18 @@
             android:layout_marginStart="20dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
 
             >
 
-            <ImageView
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:src="@drawable/ic_minus_red2"
-
+                android:text="Quantity"
+                android:layout_marginEnd="10dp"
                 />
+
 
             <TextView
                 android:layout_width="wrap_content"
@@ -77,13 +74,7 @@
                 android:background="@drawable/count_background"
                 android:textStyle="bold" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:src="@drawable/ic_plus_red2"
 
-                />
 
             <Space
                 android:layout_width="wrap_content"

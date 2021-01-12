@@ -9,7 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".cart.CartHome"></activity>
+        <activity android:name=".myOrder.OrderDetails"></activity>
+        <activity android:name=".myOrder.MyOrders" />
+        <activity android:name=".aboutUs.AboutUs" />
+        <activity android:name=".cart.Checkout" />
+        <activity android:name=".cart.CartHome" />
         <activity android:name=".home.HomePage" />
         <activity android:name=".loginAndSignUp.OtpVerification" />
         <activity android:name=".loginAndSignUp.SignUp" />

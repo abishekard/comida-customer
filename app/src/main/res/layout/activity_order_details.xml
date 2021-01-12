@@ -26,9 +26,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:text="Cart"
-            android:textSize="30sp"
+            android:text="#123456789"
+            android:textSize="20sp"
             android:textStyle="bold"
+            android:layout_marginTop="2dp"
 
             />
     </LinearLayout>
@@ -50,7 +51,6 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="30dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginBottom="20dp"
                 android:orientation="horizontal">
 
                 <androidx.cardview.widget.CardView
@@ -103,10 +103,54 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <include layout="@layout/cart_food_recycler_item"/>
-            <include layout="@layout/cart_food_recycler_item"/>
-            <include layout="@layout/cart_food_recycler_item"/>
-            <include layout="@layout/cart_food_recycler_item"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/rectangle"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Delivery Address" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_weight="1"
+                        android:maxLines="2"
+                        android:text="653 Nostrand Ave.,Brooklyn, NY 11216"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="100dp"
+
+                        />
+
+
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <include layout="@layout/my_order_list_design2"/>
+            <include layout="@layout/my_order_list_design2"/>
+            <include layout="@layout/my_order_list_design2"/>
+            <include layout="@layout/my_order_list_design2"/>
+
 
 
             <LinearLayout
@@ -217,12 +261,17 @@
                     android:text="₹ 225"/>
             </LinearLayout>
 
+
+
+
+
+
+
             <Button
-                android:id="@+id/btn_checkout"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/background_btn_login"
-                android:text="checkout"
+                android:text="Done"
                 android:layout_gravity="center_horizontal"
                 android:textColor="@color/white"
                 android:layout_marginTop="50dp"

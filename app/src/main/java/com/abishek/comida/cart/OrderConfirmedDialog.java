@@ -1,25 +1,22 @@
-package com.abishek.comida.home.fragments;
+package com.abishek.comida.cart;
 
-import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.abishek.comida.R;
-import com.abishek.comida.aboutUs.AboutUs;
-import com.abishek.comida.myOrder.MyOrders;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link More#newInstance} factory method to
+ * Use the {@link OrderConfirmedDialog#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class More extends Fragment implements View.OnClickListener {
+public class OrderConfirmedDialog extends DialogFragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -29,9 +26,8 @@ public class More extends Fragment implements View.OnClickListener {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private LinearLayout  myOrder,notification,aboutUs,feedback;
 
-    public More() {
+    public OrderConfirmedDialog() {
         // Required empty public constructor
     }
 
@@ -41,11 +37,11 @@ public class More extends Fragment implements View.OnClickListener {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment More.
+     * @return A new instance of fragment OrderConfirmedDialog.
      */
     // TODO: Rename and change types and number of parameters
-    public static More newInstance(String param1, String param2) {
-        More fragment = new More();
+    public static OrderConfirmedDialog newInstance(String param1, String param2) {
+        OrderConfirmedDialog fragment = new OrderConfirmedDialog();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -65,33 +61,15 @@ public class More extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_more, container, false);
-
-        myOrder = view.findViewById(R.id.my_orders);
-        notification = view.findViewById(R.id.notification);
-        aboutUs = view.findViewById(R.id.about_us);
-        feedback = view.findViewById(R.id.send_feedback);
-
-        myOrder.setOnClickListener(this);
-        notification.setOnClickListener(this);
-        aboutUs.setOnClickListener(this);
-        feedback.setOnClickListener(this);
-
-        return  view;
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_order_confirmed_dialog, container, false);
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId())
-        {
-            case R.id.my_orders:startActivity(new Intent(getContext(), MyOrders.class));
-                break;
-            case R.id.notification:
-                break;
-            case R.id.about_us: startActivity(new Intent(getContext(), AboutUs.class));
-                break;
-            case R.id.send_feedback:
-                break;
-        }
+    public void onActivityCreated(Bundle arg0) {
+        super.onActivityCreated(arg0);
+        getDialog().getWindow()
+                .getAttributes().windowAnimations = R.style.DialogAnimation;
     }
+
 }

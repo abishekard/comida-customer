@@ -13,11 +13,14 @@
     <color name="orange">#DA4B1E</color>
     <color name="dirty_white">#dddddd</color>
     <color name="dirty_white2">  #F6F6F6</color>
+    <color name="dirty_white3">#ECEBEB</color>
     <color name="grey">#5A5959</color>
     <color name="icon_unselect">#b6b7b7</color>
+    <color name="transparent">#000E0E0E</color>
 
 
-
+    <color name="tab_background_select">@color/colorPrimary</color>
+    <color name="tab_background_unselect">@color/white</color>
 
 
 
