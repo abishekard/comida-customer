@@ -2,4 +2,5 @@
     <string name="app_name">Comida</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="map_api">AIzaSyA_LAplOzfBwt41sePe6oHy0yVLA98ZCBU</string>
 </resources>

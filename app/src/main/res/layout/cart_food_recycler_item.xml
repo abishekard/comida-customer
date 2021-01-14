@@ -62,7 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:src="@drawable/ic_minus_red2"
+                android:src="@drawable/ic_minus_red3"
 
                 />
 
@@ -81,7 +81,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:src="@drawable/ic_plus_red2"
+                android:src="@drawable/ic_plus_red3"
 
                 />
 

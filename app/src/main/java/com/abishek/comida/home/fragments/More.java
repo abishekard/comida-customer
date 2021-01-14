@@ -12,6 +12,8 @@ import android.widget.LinearLayout;
 
 import com.abishek.comida.R;
 import com.abishek.comida.aboutUs.AboutUs;
+import com.abishek.comida.address.AddNewAddress;
+import com.abishek.comida.address.AddressHomePage;
 import com.abishek.comida.myOrder.MyOrders;
 
 /**
@@ -90,7 +92,7 @@ public class More extends Fragment implements View.OnClickListener {
                 break;
             case R.id.about_us: startActivity(new Intent(getContext(), AboutUs.class));
                 break;
-            case R.id.send_feedback:
+            case R.id.send_feedback:startActivity(new Intent(getContext(), AddNewAddress.class));
                 break;
         }
     }

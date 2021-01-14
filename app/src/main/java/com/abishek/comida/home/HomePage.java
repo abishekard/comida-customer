@@ -20,8 +20,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class HomePage extends AppCompatActivity implements View.OnClickListener {
 
-    private ImageView navProfile,navMore,cartIcon;
+    private ImageView navProfile, navMore, cartIcon;
     private FloatingActionButton navHome;
+    private int bottomOption;
 
 
     @Override
@@ -30,9 +31,10 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         setContentView(R.layout.activity_home_page);
         inItUi();
         loadFragment(new Home());
+        bottomOption = 2;
     }
-    public void inItUi()
-    {
+
+    public void inItUi() {
         navProfile = findViewById(R.id.profile);
         navHome = findViewById(R.id.home);
         navMore = findViewById(R.id.more);
@@ -42,22 +44,33 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         navHome.setOnClickListener(this);
         navProfile.setOnClickListener(this);
 
+
     }
 
     @Override
     public void onClick(View v) {
 
-        switch (v.getId())
-        {
-            case R.id.home: setBottomIcon(navHome);
-
-                loadFragment(new Home());
+        switch (v.getId()) {
+            case R.id.home:
+                if (bottomOption != 2) {
+                    setBottomIcon(navHome);
+                    bottomOption = 2;
+                    loadFragment(new Home());
+                }
                 break;
-            case R.id.more:setBottomIcon(navMore);
-                loadFragment(new More());
+            case R.id.more:
+                if (bottomOption != 3) {
+                    setBottomIcon(navMore);
+                    loadFragment(new More());
+                    bottomOption = 3;
+                }
                 break;
-            case R.id.profile:setBottomIcon(navProfile);
-                loadFragment(new Profile());
+            case R.id.profile:
+                if (bottomOption != 1) {
+                    setBottomIcon(navProfile);
+                    loadFragment(new Profile());
+                    bottomOption = 1;
+                }
                 break;
             case R.id.cart:
                 break;
@@ -68,23 +81,39 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_left);
         transaction.replace(R.id.fragment_container, fragment);
-       // transaction.addToBackStack(null);
+        // transaction.addToBackStack(null);
         transaction.commit();
     }
 
     public void setBottomIcon(ImageView imageView) {
-        navHome.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(HomePage.this,R.color.icon_unselect)));
-      //  navHome.setBackgroundColor(ContextCompat.getColor(HomePage.this,R.color.icon_unselect));
-      //  navHome.setColorFilter(ContextCompat.getColor(this, R.color.icon_unselect), android.graphics.PorterDuff.Mode.SRC_IN);
+        navHome.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(HomePage.this, R.color.icon_unselect)));
+        //  navHome.setBackgroundColor(ContextCompat.getColor(HomePage.this,R.color.icon_unselect));
+        //  navHome.setColorFilter(ContextCompat.getColor(this, R.color.icon_unselect), android.graphics.PorterDuff.Mode.SRC_IN);
         navProfile.setColorFilter(ContextCompat.getColor(this, R.color.icon_unselect), android.graphics.PorterDuff.Mode.SRC_IN);
         navMore.setColorFilter(ContextCompat.getColor(this, R.color.icon_unselect), android.graphics.PorterDuff.Mode.SRC_IN);
 
         imageView.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
     }
+
     public void setBottomIcon(FloatingActionButton fab) {
-       /// navHome.setColorFilter(ContextCompat.getColor(this, R.color.icon_unselect), android.graphics.PorterDuff.Mode.SRC_IN);
+        /// navHome.setColorFilter(ContextCompat.getColor(this, R.color.icon_unselect), android.graphics.PorterDuff.Mode.SRC_IN);
         navProfile.setColorFilter(ContextCompat.getColor(this, R.color.icon_unselect), android.graphics.PorterDuff.Mode.SRC_IN);
         navMore.setColorFilter(ContextCompat.getColor(this, R.color.icon_unselect), android.graphics.PorterDuff.Mode.SRC_IN);
 
-        fab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(HomePage.this,R.color.colorPrimary)));    }
+        fab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(HomePage.this, R.color.colorPrimary)));
+    }
+
+
+    @Override
+    public void onBackPressed() {
+
+
+        if (bottomOption == 2)
+            super.onBackPressed();
+        else {
+            setBottomIcon(navHome);
+            bottomOption = 2;
+            loadFragment(new Home());
+        }
+    }
 }
