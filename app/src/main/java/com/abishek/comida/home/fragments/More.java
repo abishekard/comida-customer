@@ -15,6 +15,8 @@ import com.abishek.comida.aboutUs.AboutUs;
 import com.abishek.comida.address.AddNewAddress;
 import com.abishek.comida.address.AddressHomePage;
 import com.abishek.comida.myOrder.MyOrders;
+import com.abishek.comida.myOrder.track.TrackOrder;
+import com.abishek.comida.notification.NotificationHomePage;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -88,11 +90,11 @@ public class More extends Fragment implements View.OnClickListener {
         {
             case R.id.my_orders:startActivity(new Intent(getContext(), MyOrders.class));
                 break;
-            case R.id.notification:
+            case R.id.notification:startActivity(new Intent(getContext(), NotificationHomePage.class));
                 break;
             case R.id.about_us: startActivity(new Intent(getContext(), AboutUs.class));
                 break;
-            case R.id.send_feedback:startActivity(new Intent(getContext(), AddNewAddress.class));
+            case R.id.send_feedback:
                 break;
         }
     }

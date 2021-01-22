@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".cart.CartHome">
+    tools:context=".myOrder.OrderDetails">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -144,6 +144,17 @@
 
                 </LinearLayout>
             </LinearLayout>
+
+            <Button
+                android:id="@+id/track_order"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Track  order"
+                android:background="@drawable/rectangle_red_outline"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:textColor="@color/colorPrimary"/>
 
 
             <include layout="@layout/my_order_list_design2"/>

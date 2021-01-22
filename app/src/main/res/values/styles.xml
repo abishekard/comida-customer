@@ -15,6 +15,10 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+    <style name="roundedCornerImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">10%</item>
+    </style>
 
     <style name="dialog">
         <item name="android:windowIsFloating">false</item>
@@ -51,5 +55,16 @@
         <item name="android:textColor">@color/grey</item>
 
     </style>
-
+    <style name="current_status_text" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/green</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/montserrat_semi_bold</item>
+    </style>
+    <style name="order_status_text" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/montserrat_semi_bold</item>
+    </style>
 </resources>

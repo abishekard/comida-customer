@@ -17,6 +17,8 @@
     <color name="grey">#5A5959</color>
     <color name="icon_unselect">#b6b7b7</color>
     <color name="transparent">#000E0E0E</color>
+    <color name="blue">#2196F3</color>
+    <color name="voilet">#42296E</color>
 
 
     <color name="tab_background_select">@color/colorPrimary</color>

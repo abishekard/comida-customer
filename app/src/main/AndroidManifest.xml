@@ -1,27 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.abishek.comida">
+
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".address.AddNewAddress"></activity>
-        <activity android:name=".address.AddressHomePage" />
-        <activity android:name=".myOrder.OrderDetails" />
-        <activity android:name=".myOrder.MyOrders" />
-        <activity android:name=".aboutUs.AboutUs" />
-        <activity android:name=".cart.Checkout" />
-        <activity android:name=".cart.CartHome" />
-        <activity android:name=".home.HomePage" />
-        <activity android:name=".loginAndSignUp.OtpVerification" />
-        <activity android:name=".loginAndSignUp.SignUp" />
-        <activity android:name=".loginAndSignUp.Login" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".splashScreen.onBoarding">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".home.product.ShopProductDetail"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".notification.NotificationHomePage"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".myOrder.track.TrackOrder"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".address.AddNewAddress"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".address.AddressHomePage"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".myOrder.OrderDetails"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".myOrder.MyOrders"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".aboutUs.AboutUs"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".cart.Checkout"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".cart.CartHome"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".home.HomePage"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".loginAndSignUp.OtpVerification"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".loginAndSignUp.SignUp"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".loginAndSignUp.Login"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".splashScreen.onBoarding"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

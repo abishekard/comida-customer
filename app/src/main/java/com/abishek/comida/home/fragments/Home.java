@@ -7,34 +7,52 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.location.LocationManagerCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.abishek.comida.R;
 import com.abishek.comida.cart.CartHome;
+import com.abishek.comida.commonFiles.MySingleton;
+import com.abishek.comida.home.product.FoodModel;
+import com.abishek.comida.home.adapters.AllProductAdapter;
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
+import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_ALL_PRODUCTS;
+import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.NO_OF_RETRY;
+import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.RETRY_SECONDS;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -64,7 +82,9 @@ public class Home extends Fragment implements View.OnClickListener {
 
     private TextView locationView,detailedLocationView;
 
+    private ArrayList<FoodModel> productList;
 
+    private RecyclerView productRecycler;
 
 
 
@@ -105,6 +125,7 @@ public class Home extends Fragment implements View.OnClickListener {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+        productList = new ArrayList<>();
         cartIcon = view.findViewById(R.id.cart);
 
         cartIcon.setOnClickListener(this);
@@ -118,6 +139,7 @@ public class Home extends Fragment implements View.OnClickListener {
         if(!isLocationEnabled())
             Toast.makeText(getContext(),"Plese Enable GPS ",Toast.LENGTH_SHORT).show();
 
+        fetchProductList(view);
         return view;
     }
 
@@ -240,5 +262,103 @@ public class Home extends Fragment implements View.OnClickListener {
 
     }
 
+
+    public void fetchProductList(View view)
+    {
+
+
+        Log.e(TAG, "fetchAllProductList : called");
+
+        final String URL = BASE_ALL_PRODUCTS;
+
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.e(TAG, response);
+
+
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    JSONArray subJson = jsonObject.getJSONArray("data");
+                    for(int i=0;i<subJson.length();i++)
+                    {
+                        JSONObject childJson = subJson.getJSONObject(i);
+                        String productId =childJson.getString("id");
+                        String itemName=childJson.getString("item_name");
+                        String itemImage = childJson.getString("item_image");
+                        String price = childJson.getString("price");
+                        String priceType=childJson.getString("price_type");
+                        String discount=childJson.getString("discoutn");
+                        String vegNonVeg=childJson.getString("veg_non_veg");
+                        String type=childJson.getString("type");
+                        String shopName=childJson.getString("shop_name");
+                        String address=childJson.getString("address");
+
+
+                        productList.add(new FoodModel(productId,itemName,itemImage,price,priceType,discount,vegNonVeg,type,shopName,address));
+
+                    }
+
+
+                    setDataToView(view);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.toString());
+                }
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, error.toString());
+
+
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                /*Map<String, String> header = new HashMap<>();
+
+                String tokenType = new LoginSessionManager(getContext()).getUserDetailsFromSP().get(TOKEN_TYPE);
+                String accessToken = new LoginSessionManager(getContext()).getUserDetailsFromSP().get(ACCESS_TOKEN);
+
+                //String fullKey = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjcxNDdmNGFjNWFlN2IzZDM4MmYyNTAwNWVhNTIwOGUyNDAzNjYwNzMyOWMyYjZiYWQ1YTlhMmNlZTEzZDI3ZTgzN2RkOTY5NzcxNWNhMzUxIn0.eyJhdWQiOiIxIiwianRpIjoiNzE0N2Y0YWM1YWU3YjNkMzgyZjI1MDA1ZWE1MjA4ZTI0MDM2NjA3MzI5YzJiNmJhZDVhOWEyY2VlMTNkMjdlODM3ZGQ5Njk3NzE1Y2EzNTEiLCJpYXQiOjE1NTExOTc0MjcsIm5iZiI6MTU1MTE5NzQyNywiZXhwIjoxNTgyNzMzNDI3LCJzdWIiOiI4NSIsInNjb3BlcyI6W119.kLmk7mEukKdoS9e_v31VQX29ypn7hJb7qAJvKA_GqeiYEYe2EQ9zLTd1IwO-S31CofoypnJ-LvAT7D4I0EZ9iYM1AS5A6-7bWH3-h01-glLQubbfedhvlg0xfT60s2r1onxlEMUnt-0kB2tbYgX_df4zJPExUhHRpzlnLNChzC3r1QD1dzgn-814GjxlQkwfgv_5dsKzyMlvVCHiTDg2z35h2uiWeRuVhmznbUGaGCWcxPwHpNV4k9pHOH9yrCwkjJuHlcSIiXD7W_QsRnzEa_dY6wASdymtGqHb99c3kfWmiKKwngAC9GY56OeMP0vLnYpXOAspu5rDlQkLCzCeh58KnqbqMUrQ0bZ3ChTaeATXM_fncQiByfMgAAfiVfu8GpKsnQKSYobzcqrqjmAgPTNEcq5ba4BCUuw1ysv0LodTqHGUHsSNsiZfx3GyqLoyOCMWY5oWO4M4saOTo3pUSGPSq15BsqRQXqbvzshxk9ysaAU1K9dZj-AZpy4mUxf3y4UX8-EADqJmYV7ywEph_FveDbdWNNUF72bqbTg8DTxwJ6V53cEOsxbmNb82jFJnz1vSxLFDDXv9Vvf23W5hm4Io2Ogxv8wyE5vNUgL2XepFrGwWWANEsp4fLebzfgFD3045vkrcfRPc164LVKHdLyaHhxB8TrYeK9TOqeEfk7M";
+
+                header.put("Accept", "application/json");
+                header.put("Authorization", tokenType + " " + accessToken);*/
+
+                return super.getHeaders();
+            }
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+
+                return super.getParams();
+            }
+
+        };
+
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy((RETRY_SECONDS),
+                NO_OF_RETRY, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        MySingleton.getInstance(getContext()).addToRequestQueue(stringRequest);
+
+
+    }
+
+    private void setDataToView(View v)
+    {
+        productRecycler = v.findViewById(R.id.all_product_recycler);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        AllProductAdapter allProductAdapter = new AllProductAdapter(productList,getContext());
+        productRecycler.setAdapter(allProductAdapter);
+        productRecycler.setLayoutManager(linearLayoutManager);
+        allProductAdapter.notifyDataSetChanged();
+
+    }
 
 }
