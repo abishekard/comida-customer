@@ -27,8 +27,10 @@ import android.widget.Toast;
 import com.abishek.comida.R;
 import com.abishek.comida.cart.CartHome;
 import com.abishek.comida.commonFiles.MySingleton;
+import com.abishek.comida.home.adapters.AllRestaurantAdapter;
 import com.abishek.comida.home.product.FoodModel;
 import com.abishek.comida.home.adapters.AllProductAdapter;
+import com.abishek.comida.home.product.RestaurantModel;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -51,6 +53,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_ALL_PRODUCTS;
+import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_RESTAURANT_ALL;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.NO_OF_RETRY;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.RETRY_SECONDS;
 
@@ -82,9 +85,9 @@ public class Home extends Fragment implements View.OnClickListener {
 
     private TextView locationView,detailedLocationView;
 
-    private ArrayList<FoodModel> productList;
+    private List<RestaurantModel> restaurantList;
 
-    private RecyclerView productRecycler;
+    private RecyclerView restaurantRecycler;
 
 
 
@@ -125,7 +128,7 @@ public class Home extends Fragment implements View.OnClickListener {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        productList = new ArrayList<>();
+        restaurantList = new ArrayList<>();
         cartIcon = view.findViewById(R.id.cart);
 
         cartIcon.setOnClickListener(this);
@@ -269,7 +272,7 @@ public class Home extends Fragment implements View.OnClickListener {
 
         Log.e(TAG, "fetchAllProductList : called");
 
-        final String URL = BASE_ALL_PRODUCTS;
+        final String URL = BASE_RESTAURANT_ALL;
 
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -285,20 +288,21 @@ public class Home extends Fragment implements View.OnClickListener {
                     for(int i=0;i<subJson.length();i++)
                     {
                         JSONObject childJson = subJson.getJSONObject(i);
-                        String productId =childJson.getString("id");
-                        String itemName=childJson.getString("item_name");
-                        String itemImage = childJson.getString("item_image");
-                        String price = childJson.getString("price");
-                        String priceType=childJson.getString("price_type");
-                        String discount=childJson.getString("discoutn");
-                        String vegNonVeg=childJson.getString("veg_non_veg");
-                        String type=childJson.getString("type");
+                        String shopId =childJson.getString("id");
                         String shopName=childJson.getString("shop_name");
+                        String speciality = childJson.getString("speciality");
+                        String shopImage = childJson.getString("shop_image");
                         String address=childJson.getString("address");
+                        String lat=childJson.getString("lat");
+                        String lng=childJson.getString("long");
+                        String openTime=childJson.getString("open_time");
+                        String closeTime=childJson.getString("close_time");
+                        String available=childJson.getString("available");
+                        String rating=childJson.getString("rating");
 
 
-                        productList.add(new FoodModel(productId,itemName,itemImage,price,priceType,discount,vegNonVeg,type,shopName,address));
-
+                        restaurantList.add(new RestaurantModel(shopId,shopName,shopImage,speciality,
+                                address,lat,lng,closeTime,openTime,available,rating));
                     }
 
 
@@ -352,12 +356,12 @@ public class Home extends Fragment implements View.OnClickListener {
 
     private void setDataToView(View v)
     {
-        productRecycler = v.findViewById(R.id.all_product_recycler);
+        restaurantRecycler = v.findViewById(R.id.all_restaurant_recycler);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        AllProductAdapter allProductAdapter = new AllProductAdapter(productList,getContext());
-        productRecycler.setAdapter(allProductAdapter);
-        productRecycler.setLayoutManager(linearLayoutManager);
-        allProductAdapter.notifyDataSetChanged();
+        AllRestaurantAdapter allRestaurantAdapter = new AllRestaurantAdapter(restaurantList,getContext());
+        restaurantRecycler.setAdapter(allRestaurantAdapter);
+        restaurantRecycler.setLayoutManager(linearLayoutManager);
+        allRestaurantAdapter.notifyDataSetChanged();
 
     }
 

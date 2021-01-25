@@ -1,32 +1,28 @@
-package com.abishek.comida.home.product;
+package com.abishek.comida.cart.cartRoom;
+
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.abishek.comida.cart.cartRoom.TimestampConverter;
-
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-public class FoodModel {
-
+public class FoodTable implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
-
+    private String id;
 
     @ColumnInfo(name = "created_at")
-    @TypeConverters({TimestampConverter.class})
     private Date createdAt;
 
     @ColumnInfo(name = "modified_at")
-    @TypeConverters({TimestampConverter.class})
     private Date modifiedAt;
 
-   private String productId;
+
+    private String productId;
     private String foodName;
     private String foodImage;
     private String price;
@@ -39,10 +35,9 @@ public class FoodModel {
     private int quantity;
 
 
-    @Ignore
-    public FoodModel(String productId, String foodName, String foodImage,
-                     String price, String price_type, String discount,
-                     String vegNonVeg, String type, String shopName, String address) {
+    public FoodTable(String productId, String foodName, String foodImage,
+                     String price, String price_type, String discount, String vegNonVeg,
+                     String type) {
         this.productId = productId;
         this.foodName = foodName;
         this.foodImage = foodImage;
@@ -51,25 +46,22 @@ public class FoodModel {
         this.discount = discount;
         this.vegNonVeg = vegNonVeg;
         this.type = type;
-        this.shopName = shopName;
-        this.address = address;
 
     }
 
 
-    public FoodModel(String productId, String foodName, String foodImage, String price,
-                     String price_type, String discount, String vegNonVeg, String type) {
-        this.productId = productId;
-        this.foodName = foodName;
-        this.foodImage = foodImage;
-        this.price = price;
-        this.price_type = price_type;
-        this.discount = discount;
-        this.vegNonVeg = vegNonVeg;
-        this.type = type;
-        this.quantity=1;
+
+    public int getQuantity() {
+        return quantity;
     }
 
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getId() {
+        return id;
+    }
 
     public Date getCreatedAt() {
         return createdAt;
@@ -77,22 +69,6 @@ public class FoodModel {
 
     public Date getModifiedAt() {
         return modifiedAt;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public void setModifiedAt(Date modifiedAt) {
-        this.modifiedAt = modifiedAt;
     }
 
     public String getProductId() {
@@ -135,8 +111,16 @@ public class FoodModel {
         return address;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setModifiedAt(Date modifiedAt) {
+        this.modifiedAt = modifiedAt;
     }
 
     public void setProductId(String productId) {
@@ -177,9 +161,5 @@ public class FoodModel {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 }

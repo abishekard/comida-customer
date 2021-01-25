@@ -11,6 +11,7 @@ public class CommonVariablesAndFunctions {
     public static final String BASE_IMAGE = "http://androasu.in/comida/";
     public static final String BASE_ALL_PRODUCTS = BASE+"product/all";
     public static final String BASE_PRODUCT_CATEGORY = BASE+"product/category/all/";
+    public static final String BASE_RESTAURANT_ALL = BASE+"restaurent/all";
 
 
 }

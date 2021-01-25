@@ -103,11 +103,20 @@
                 </LinearLayout>
             </LinearLayout>
 
+         <!--   <include layout="@layout/cart_food_recycler_item"/>
             <include layout="@layout/cart_food_recycler_item"/>
             <include layout="@layout/cart_food_recycler_item"/>
-            <include layout="@layout/cart_food_recycler_item"/>
-            <include layout="@layout/cart_food_recycler_item"/>
+            <include layout="@layout/cart_food_recycler_item"/>-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/cart_recycler_view"/>
 
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -131,7 +140,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:text="₹ 250"/>
+                    android:text="₹ "/>
+                <TextView
+                    android:id="@+id/sub_total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="250"/>
             </LinearLayout>
 
             <LinearLayout
@@ -157,7 +172,14 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:textColor="@color/green"
-                    android:text="- ₹ 50"/>
+                    android:text="- ₹ "/>
+                <TextView
+                    android:id="@+id/discount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="@color/green"
+                    android:text="50"/>
             </LinearLayout>
 
             <LinearLayout
@@ -182,7 +204,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:text="₹ 25"/>
+                    android:text="₹ "/>
+                <TextView
+                    android:id="@+id/delivery_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="25"/>
             </LinearLayout>
             <View
                 android:layout_marginTop="10dp"
@@ -214,7 +242,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:text="₹ 225"/>
+                    android:text="₹ "/>
+                <TextView
+                    android:id="@+id/total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="225"/>
+
             </LinearLayout>
 
             <Button
@@ -225,8 +260,8 @@
                 android:text="checkout"
                 android:layout_gravity="center_horizontal"
                 android:textColor="@color/white"
-                android:layout_marginTop="50dp"
-                android:layout_marginBottom="30dp"/>
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="20dp"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

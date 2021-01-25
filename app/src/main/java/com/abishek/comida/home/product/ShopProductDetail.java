@@ -6,13 +6,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.abishek.comida.R;
 import com.abishek.comida.commonFiles.MySingleton;
-import com.abishek.comida.home.adapters.AllProductAdapter;
+import com.abishek.comida.home.adapters.ProductParentAdapter;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -29,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE;
-import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_ALL_PRODUCTS;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_IMAGE;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_PRODUCT_CATEGORY;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.NO_OF_RETRY;
@@ -45,12 +43,14 @@ public class ShopProductDetail extends AppCompatActivity {
     private TextView shopNameV,specialityV,shopAddressV,itemCountV;
     private ImageView shopImageV;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail_and_add);
 
         categoryList = new ArrayList<>();
+        partnerId = getIntent().getStringExtra("partner_id");
         categoryRecycler = findViewById(R.id.category_food_recycler);
         shopNameV = findViewById(R.id.shop_name);
         shopAddressV = findViewById(R.id.shop_address);
@@ -66,7 +66,7 @@ public class ShopProductDetail extends AppCompatActivity {
 
         Log.e(TAG, "fetchCategory : called");
 
-        final String URL = BASE_PRODUCT_CATEGORY+"1";
+        final String URL = BASE_PRODUCT_CATEGORY+partnerId;
 
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -165,7 +165,7 @@ public class ShopProductDetail extends AppCompatActivity {
     {
         categoryRecycler = findViewById(R.id.category_recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShopProductDetail.this);
-        ProductParentAdapter productParentAdapter = new ProductParentAdapter(categoryList,ShopProductDetail.this);
+        ProductParentAdapter productParentAdapter = new ProductParentAdapter(categoryList,ShopProductDetail.this,partnerId);
         categoryRecycler.setAdapter(productParentAdapter);
         categoryRecycler.setLayoutManager(linearLayoutManager);
         productParentAdapter.notifyDataSetChanged();
@@ -177,4 +177,8 @@ public class ShopProductDetail extends AppCompatActivity {
         Log.e(TAG,".........."+BASE+shopImage);
 
     }
+
+
+
+
 }

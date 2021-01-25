@@ -1,10 +1,9 @@
-package com.abishek.comida.home.product;
+package com.abishek.comida.home.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.abishek.comida.R;
+import com.abishek.comida.home.product.CategoryModel;
 
 import java.util.ArrayList;
 
@@ -19,10 +19,12 @@ public class ProductParentAdapter extends RecyclerView.Adapter<ProductParentAdap
 
     private ArrayList<CategoryModel> categoryList;
     private Context context;
+    private String pId;
 
-    public ProductParentAdapter(ArrayList<CategoryModel> categoryList, Context context) {
+    public ProductParentAdapter(ArrayList<CategoryModel> categoryList, Context context,String pId) {
         this.categoryList = categoryList;
         this.context = context;
+        this.pId = pId;
     }
 
     @NonNull
@@ -36,7 +38,7 @@ public class ProductParentAdapter extends RecyclerView.Adapter<ProductParentAdap
     @Override
     public void onBindViewHolder(@NonNull ProductParentHolder holder, int position) {
 
-        ProductChildAdapter productChildAdapter = new ProductChildAdapter(categoryList.get(position).getFoodList(),context);
+        ProductChildAdapter productChildAdapter = new ProductChildAdapter(categoryList.get(position).getFoodList(),context,pId);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
         holder.childRecycler.setLayoutManager(linearLayoutManager);
