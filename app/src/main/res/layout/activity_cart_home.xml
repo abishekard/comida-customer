@@ -33,11 +33,30 @@
             />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/empty_Cart"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:layout_weight="1">
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="empty cart"
+            android:textColor="@color/black"
+            android:textSize="30sp" />
+    </LinearLayout>
+
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/main_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:visibility="gone">
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -53,202 +72,220 @@
                 android:layout_marginBottom="20dp"
                 android:orientation="horizontal">
 
-                <androidx.cardview.widget.CardView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    app:cardCornerRadius="10dp"
-                    app:cardUseCompatPadding="true">
 
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/shop_image"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:scaleType="centerCrop"
+                        app:shapeAppearanceOverlay="@style/roundedCornerImageView"
                         android:src="@mipmap/sample2" />
 
 
-                </androidx.cardview.widget.CardView>
+
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
                     android:layout_margin="15dp"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
                     <TextView
+                        android:id="@+id/shop_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_semi_bold"
                         android:text="King Burgers"
-                        android:textStyle="bold"
                         android:textColor="@color/grey"
-                        android:fontFamily="@font/montserrat_semi_bold"/>
+                        android:textStyle="bold" />
+
                     <TextView
+                        android:id="@+id/speciality"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Burger Western Food"
 
-                        android:textColor="@color/grey"
-                        />
+                        android:textColor="@color/grey" />
+
                     <Space
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
+                        android:layout_weight="1" />
+
                     <TextView
+                        android:id="@+id/address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="No 03, 4th Lane, Newyork"
-                        android:textColor="@color/grey"
                         android:drawableLeft="@drawable/ic_location2"
                         android:drawablePadding="8dp"
-                        android:textSize="12sp"
-                        />
+                        android:text="No 03, 4th Lane, Newyork"
+                        android:textColor="@color/grey"
+                        android:textSize="12sp" />
 
                 </LinearLayout>
             </LinearLayout>
 
-         <!--   <include layout="@layout/cart_food_recycler_item"/>
-            <include layout="@layout/cart_food_recycler_item"/>
-            <include layout="@layout/cart_food_recycler_item"/>
-            <include layout="@layout/cart_food_recycler_item"/>-->
+            <!--   <include layout="@layout/cart_food_recycler_item"/>
+               <include layout="@layout/cart_food_recycler_item"/>
+               <include layout="@layout/cart_food_recycler_item"/>
+               <include layout="@layout/cart_food_recycler_item"/>-->
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/cart_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/cart_recycler_view"/>
+                android:layout_height="wrap_content" />
 
 
             <Space
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="30dp"
                 android:layout_marginEnd="40dp"
-                android:layout_marginStart="20dp"
-                >
+                android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
+                    android:text="Sub Total"
                     android:textColor="@color/black"
-                    android:text="Sub Total"/>
+                    android:textStyle="bold" />
+
                 <Space
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:text="₹ "/>
+                    android:text="₹ "
+                    android:textStyle="bold" />
+
                 <TextView
                     android:id="@+id/sub_total"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:text="250"/>
+                    android:text="250"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="40dp"
-                android:layout_marginStart="20dp"
-                >
+                android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
+                    android:text="Discount"
                     android:textColor="@color/black"
-                    android:text="Discount"/>
+                    android:textStyle="bold" />
+
                 <Space
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
+                    android:text="- ₹ "
                     android:textColor="@color/green"
-                    android:text="- ₹ "/>
+                    android:textStyle="bold" />
+
                 <TextView
                     android:id="@+id/discount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
+                    android:text="50"
                     android:textColor="@color/green"
-                    android:text="50"/>
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="40dp"
-                android:layout_marginStart="20dp"
-                >
+                android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
+                    android:text="Delivery Cost"
                     android:textColor="@color/black"
-                    android:text="Delivery Cost"/>
+                    android:textStyle="bold" />
+
                 <Space
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:text="₹ "/>
+                    android:text="₹ "
+                    android:textStyle="bold" />
+
                 <TextView
                     android:id="@+id/delivery_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:text="25"/>
+                    android:text="25"
+                    android:textStyle="bold" />
             </LinearLayout>
+
             <View
-                android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="30dp"
                 android:background="@color/grey" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="40dp"
-                android:layout_marginStart="20dp"
-                >
+                android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
+                    android:text="Total"
                     android:textColor="@color/black"
-                    android:text="Total"/>
+                    android:textStyle="bold" />
+
                 <Space
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:text="₹ "/>
+                    android:text="₹ "
+                    android:textStyle="bold" />
+
                 <TextView
                     android:id="@+id/total"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:text="225"/>
+                    android:text="225"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -256,12 +293,12 @@
                 android:id="@+id/btn_checkout"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="20dp"
                 android:background="@drawable/background_btn_login"
                 android:text="checkout"
-                android:layout_gravity="center_horizontal"
-                android:textColor="@color/white"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="20dp"/>
+                android:textColor="@color/white" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

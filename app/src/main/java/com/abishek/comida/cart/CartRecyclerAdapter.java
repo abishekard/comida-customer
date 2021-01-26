@@ -166,6 +166,8 @@ public class CartRecyclerAdapter extends RecyclerView.Adapter<CartRecyclerAdapte
             notifyItemRemoved(position);
             notifyItemRangeChanged(position,foodList.size());
             foodList.remove(position);
+            if(foodList.size()==0)
+                cartItemChangeListener.cartEmpty();
             Log.e(TAG,"......size :"+foodList.size()+".....position: "+position);
         }
     }

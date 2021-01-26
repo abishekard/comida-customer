@@ -23,6 +23,7 @@
         android:layout_weight="1" />
 
     <EditText
+        android:id="@+id/edt_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Email"
@@ -32,8 +33,9 @@
         android:textSize="15sp"
         android:drawableLeft="@drawable/ic_mail_icon"
         android:drawablePadding="10dp"
-        android:drawableRight="@drawable/ic_red_circle_tick"
+
         />
+<!--
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -47,6 +49,7 @@
         android:inputType="textPassword"
         android:drawableRight="@drawable/ic_password_visible"
         />
+-->
 
 
     <Button

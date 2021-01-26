@@ -30,6 +30,7 @@
             android:layout_height="90dp"
             android:scaleType="fitXY"
             android:src="@mipmap/face"
+            android:layout_marginTop="20dp"
             app:shapeAppearanceOverlay="@style/circleImageView" />
 
         <TextView
@@ -42,6 +43,7 @@
             android:textColor="@color/colorPrimary"
             android:textSize="8sp" />
         <TextView
+            android:id="@+id/top_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -78,7 +80,7 @@
                     android:text="Name"/>
 
                 <TextView
-                    android:id="@+id/mobile"
+                    android:id="@+id/name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Abishek kumar"
@@ -134,6 +136,7 @@
 
                 <TextView
 
+                    android:id="@+id/mobile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="+91-9999999999"
@@ -186,7 +189,7 @@
                     android:text="Email"/>
 
                 <TextView
-
+                    android:id="@+id/email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="abishek.ard@gmail.com"

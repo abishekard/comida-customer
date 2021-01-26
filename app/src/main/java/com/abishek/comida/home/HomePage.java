@@ -7,15 +7,18 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.abishek.comida.R;
+import com.abishek.comida.commonFiles.LoginSessionManager;
 import com.abishek.comida.home.fragments.Home;
 import com.abishek.comida.home.fragments.More;
 import com.abishek.comida.home.fragments.Profile;
+import com.abishek.comida.loginAndSignUp.Login;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class HomePage extends AppCompatActivity implements View.OnClickListener {
@@ -24,11 +27,15 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
     private FloatingActionButton navHome;
     private int bottomOption;
 
+    private LoginSessionManager loginSessionManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
+
+        loginSessionManager = new LoginSessionManager(HomePage.this);
         inItUi();
         loadFragment(new Home());
         bottomOption = 2;
@@ -66,6 +73,11 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
                 }
                 break;
             case R.id.profile:
+                if(!loginSessionManager.isLoggedIn())
+                {
+                    startActivity(new Intent(HomePage.this, Login.class));
+                    return;
+                }
                 if (bottomOption != 1) {
                     setBottomIcon(navProfile);
                     loadFragment(new Profile());

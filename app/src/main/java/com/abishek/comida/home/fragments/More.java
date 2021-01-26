@@ -14,6 +14,8 @@ import com.abishek.comida.R;
 import com.abishek.comida.aboutUs.AboutUs;
 import com.abishek.comida.address.AddNewAddress;
 import com.abishek.comida.address.AddressHomePage;
+import com.abishek.comida.commonFiles.LoginSessionManager;
+import com.abishek.comida.loginAndSignUp.Login;
 import com.abishek.comida.myOrder.MyOrders;
 import com.abishek.comida.myOrder.track.TrackOrder;
 import com.abishek.comida.notification.NotificationHomePage;
@@ -34,6 +36,7 @@ public class More extends Fragment implements View.OnClickListener {
     private String mParam1;
     private String mParam2;
     private LinearLayout  myOrder,notification,aboutUs,feedback;
+    private LoginSessionManager loginSessionManager;
 
     public More() {
         // Required empty public constructor
@@ -71,6 +74,8 @@ public class More extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_more, container, false);
 
+        loginSessionManager = new LoginSessionManager(getContext());
+
         myOrder = view.findViewById(R.id.my_orders);
         notification = view.findViewById(R.id.notification);
         aboutUs = view.findViewById(R.id.about_us);
@@ -88,9 +93,19 @@ public class More extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId())
         {
-            case R.id.my_orders:startActivity(new Intent(getContext(), MyOrders.class));
+            case R.id.my_orders:
+                if(!loginSessionManager.isLoggedIn()) {
+                    startActivity(new Intent(getContext(), Login.class));
+                    return;
+                }
+                startActivity(new Intent(getContext(), MyOrders.class));
                 break;
-            case R.id.notification:startActivity(new Intent(getContext(), NotificationHomePage.class));
+            case R.id.notification:
+                if(!loginSessionManager.isLoggedIn()) {
+                    startActivity(new Intent(getContext(), Login.class));
+                    return;
+                }
+                startActivity(new Intent(getContext(), NotificationHomePage.class));
                 break;
             case R.id.about_us: startActivity(new Intent(getContext(), AboutUs.class));
                 break;

@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.abishek.comida.R;
+import com.abishek.comida.home.HomePage;
 import com.abishek.comida.loginAndSignUp.Login;
 
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class onBoarding extends AppCompatActivity implements ViewPager.OnPageCha
             public void onClick(View v) {
                 int id = viewPager.getCurrentItem();
                 if(id == 2){
-                    startActivity(new Intent(onBoarding.this, Login.class));
+                    startActivity(new Intent(onBoarding.this, HomePage.class));
                   //  finish();
                 }
                 else{
@@ -88,7 +89,7 @@ public class onBoarding extends AppCompatActivity implements ViewPager.OnPageCha
         tv_skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(onBoarding.this,Login.class));
+                startActivity(new Intent(onBoarding.this,HomePage.class));
               //  finish();
             }
         });

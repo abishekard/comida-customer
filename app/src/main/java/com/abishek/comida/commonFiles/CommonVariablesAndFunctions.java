@@ -12,6 +12,11 @@ public class CommonVariablesAndFunctions {
     public static final String BASE_ALL_PRODUCTS = BASE+"product/all";
     public static final String BASE_PRODUCT_CATEGORY = BASE+"product/category/all/";
     public static final String BASE_RESTAURANT_ALL = BASE+"restaurent/all";
+    public static final String BASE_RESTAURANT_INFO = BASE+"partner/info/";
+    public static final String BASE_LOGIN_OTP = BASE+"login/send/otp";
+    public static final String BASE_LOGIN = BASE+"login/with/otp";
+    public static final String BASE_SIGN_UP = BASE+"create/new";
+    public static final String BASE_PROFILE_SHOW = BASE+"show/profile/";
 
 
 }

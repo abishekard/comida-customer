@@ -31,97 +31,49 @@ public class LoginSessionManager {
     public static final String NAME = "name";
     public static final String MOBILE = "mobile";
     public static final String EMAIL = "email";
-    public static final String OTP_VERIFIED = "0";
-    public static final String PAN_NUM = "pan_number";
-    public static final String IFSC_CODE = "ifsc_code";
-    public static final String STORE_NAME = "store_name";
-    public static final String DEALER_TYPE = "dealer_type";
-    public static final String ACCOUNT_NUMBER = "account_number";
-    public static final String GST_NUMBER = "gst_number";
-    public static final String ACCOUNT_HOLDER_NAME = "account_holder_name";
-    public static final String STORE_IMAGE = "store_name";
     public static final String PROFILE_IMAGE = "profile_image";
-    public static final String PAN_IMAGE = "pan_image";
-    public static final String CREATED_AT = "created_at";
-    public static final String REFERRAL = "referral";
-    public static final String CANCELLED_CHEQUE = "cancelled_cheque";
-    public static final String CANCELLED_CHEQUE_NUMBER = "cancelled_cheque";
-    public static final String OTHER = "others";
-
 
     public static final String FCM_TOKEN = "fcm_token";
     public static final String IS_FCM_REGISTERED = "is_fcm_registered";
 
-    public static final String DEFAULT_VEHICLE_ID = "default_vehcile_id";
 
     public LoginSessionManager(Context context) {
         this.context = context;
         pref = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
-/*
-        if (onBoardingShown()) {
+      /*  if (onBoardingShown()) {
             int supportedVersion = new VersionChecker(context).getSupportedVersion();
             if (VERSION_CODE < supportedVersion) {
                 new VersionChecker(context).openVersionNotSupportedDialog();
             }
-        }
+        }*/
 
-        if (!isFcmRegistered())
+       /* if (!isFcmRegistered())
             context.startService(new Intent(context, SendFcmToMekvahanServer.class));*/
 
     }
 
 
     public void createLoginSession(String token_type, String accessToken, String userId, String name, String mobile,
-                                   String email, String otpVerified, String panNumber, String ifscCode, String storeName,
-                                   String dealerType, String accountNumber, String gstNumber, String accountHolderName,
-                                   String profileImage,String cancellerChequeNumber) {
+                                   String email) {
 
         editor.putBoolean(IS_LOGIN, true);
-
         editor.putString(TOKEN_TYPE, token_type);
         editor.putString(ACCESS_TOKEN, accessToken);
         editor.putString(USER_ID, userId);
         editor.putString(NAME, name);
         editor.putString(MOBILE, mobile);
         editor.putString(EMAIL, email);
-        editor.putString(OTP_VERIFIED, otpVerified);
-        editor.putString(PAN_NUM, panNumber);
-        editor.putString(IFSC_CODE, ifscCode);
-        editor.putString(STORE_NAME, storeName);
-        editor.putString(DEALER_TYPE, dealerType);
-        editor.putString(ACCOUNT_NUMBER, accountNumber);
-        editor.putString(GST_NUMBER, gstNumber);
-        editor.putString(ACCOUNT_HOLDER_NAME, accountHolderName);
-        editor.putString(PROFILE_IMAGE, profileImage);
-        editor.putString(CANCELLED_CHEQUE_NUMBER,cancellerChequeNumber);
         editor.commit();
     }
 
-    public void addCustomerDetails(String name, String email, String referralCode,String storeName,String dealerType) {
-        editor.putString(NAME, name);
-        editor.putString(EMAIL, email);
-        editor.putString(STORE_NAME,storeName);
-        editor.putString(REFERRAL, referralCode);
-        editor.putString(DEALER_TYPE,dealerType);
-        editor.commit();
-    }
+
     public void addProfileImage(String imageUrl) {
         editor.putString(PROFILE_IMAGE, imageUrl);
 
         editor.commit();
     }
 
-    public void addAccountDetails(String panNumber, String accountNumber, String accountHolderName,
-                                  String ifsc,String cancelledCheque,String gstNumber) {
-        editor.putString(PAN_NUM, panNumber);
-        editor.putString(ACCOUNT_NUMBER, accountNumber);
-        editor.putString(ACCOUNT_HOLDER_NAME,accountHolderName);
-        editor.putString(IFSC_CODE, ifsc);
-        editor.putString(CANCELLED_CHEQUE,cancelledCheque);
-        editor.putString(GST_NUMBER,gstNumber);
-        editor.commit();
-    }
 
     public void checkLogin() {
 
@@ -151,15 +103,8 @@ public class LoginSessionManager {
         user.put(NAME, pref.getString(NAME, "You are Awesome"));
         user.put(MOBILE, pref.getString(MOBILE, null));
         user.put(EMAIL, pref.getString(EMAIL, "someoneawesom@gmail.com"));
-        user.put(REFERRAL, pref.getString(REFERRAL, ""));
         user.put(PROFILE_IMAGE, pref.getString(PROFILE_IMAGE, ""));
-        user.put(OTHER, pref.getString(OTHER, ""));
-        user.put(PAN_NUM, pref.getString(PAN_NUM, ""));
-        user.put(ACCOUNT_NUMBER, pref.getString(ACCOUNT_NUMBER, ""));
-        user.put(ACCOUNT_HOLDER_NAME, pref.getString(ACCOUNT_HOLDER_NAME, ""));
-        user.put(IFSC_CODE, pref.getString(IFSC_CODE, ""));
-        user.put(GST_NUMBER, pref.getString(GST_NUMBER, ""));
-        user.put(CANCELLED_CHEQUE_NUMBER, pref.getString(CANCELLED_CHEQUE_NUMBER, ""));
+
 
 
 

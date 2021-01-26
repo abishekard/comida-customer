@@ -89,6 +89,7 @@ public class ProductChildAdapter extends RecyclerView.Adapter<ProductChildAdapte
                 Log.e(TAG,".......currentP: "+currentPid+" pid: "+pId);
                 if (pId == 0) {
                     editor.putInt("pid", currentPid);
+
                     editor.apply();
                     pId=currentPid;
 
