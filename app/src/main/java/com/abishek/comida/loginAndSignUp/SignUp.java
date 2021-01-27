@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.abishek.comida.R;
+import com.abishek.comida.address.AddNewAddress;
 import com.abishek.comida.commonFiles.MySingleton;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -107,6 +108,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
     {
 
 
+        btnSignUp.setEnabled(false);
         Log.e(TAG, "SignUp : called");
 
         final String URL = BASE_SIGN_UP;
@@ -127,6 +129,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                         startActivity(new Intent(SignUp.this,OtpVerification.class).putExtra("email",email));
                         Toast.makeText(SignUp.this,"Account created and Otp sent to your email",Toast.LENGTH_SHORT).show();
                         finish();
+                        return;
 
                     }
                     if(status==300)
@@ -149,7 +152,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, error.toString());
-
+                Toast.makeText(SignUp.this,"server problem",Toast.LENGTH_SHORT).show();
 
             }
         }) {

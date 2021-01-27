@@ -36,14 +36,30 @@
 
             />
     </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/address_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+    <LinearLayout
+        android:id="@+id/no_address_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:visibility="gone"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25sp"
+            android:text="No Address"
+            android:textColor="@color/black"/>
+    </LinearLayout>
 
-    <include layout="@layout/address_list_design"/>
-    <include layout="@layout/address_list_design"/>
+<!--    <include layout="@layout/address_list_design"/>
+    <include layout="@layout/address_list_design"/>-->
 
-<Space
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_weight="1"/>
 
     <Button
         android:id="@+id/btn_add_address"

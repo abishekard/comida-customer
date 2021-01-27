@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.abishek.comida.R;
+import com.abishek.comida.address.AddNewAddress;
 import com.abishek.comida.cart.CartHome;
 import com.abishek.comida.commonFiles.MySingleton;
 import com.abishek.comida.home.adapters.AllRestaurantAdapter;
@@ -320,7 +321,7 @@ public class Home extends Fragment implements View.OnClickListener {
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, error.toString());
 
-
+                Toast.makeText(getContext(),"server problem",Toast.LENGTH_SHORT).show();
             }
         }) {
             @Override

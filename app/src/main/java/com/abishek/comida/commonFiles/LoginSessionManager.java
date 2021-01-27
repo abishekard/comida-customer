@@ -55,7 +55,7 @@ public class LoginSessionManager {
 
 
     public void createLoginSession(String token_type, String accessToken, String userId, String name, String mobile,
-                                   String email) {
+                                   String email,String profileImage) {
 
         editor.putBoolean(IS_LOGIN, true);
         editor.putString(TOKEN_TYPE, token_type);
@@ -64,13 +64,13 @@ public class LoginSessionManager {
         editor.putString(NAME, name);
         editor.putString(MOBILE, mobile);
         editor.putString(EMAIL, email);
+        editor.putString(PROFILE_IMAGE, profileImage);
         editor.commit();
     }
 
 
     public void addProfileImage(String imageUrl) {
         editor.putString(PROFILE_IMAGE, imageUrl);
-
         editor.commit();
     }
 

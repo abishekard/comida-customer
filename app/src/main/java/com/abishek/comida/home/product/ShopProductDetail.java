@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.abishek.comida.R;
+import com.abishek.comida.address.AddNewAddress;
 import com.abishek.comida.commonFiles.MySingleton;
 import com.abishek.comida.home.adapters.ProductParentAdapter;
 import com.android.volley.AuthFailureError;
@@ -32,6 +34,7 @@ import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_IM
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_PRODUCT_CATEGORY;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.NO_OF_RETRY;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.RETRY_SECONDS;
+import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.isNetworkAvailable;
 
 public class ShopProductDetail extends AppCompatActivity {
 
@@ -48,6 +51,13 @@ public class ShopProductDetail extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail_and_add);
+
+        if(!isNetworkAvailable(ShopProductDetail.this))
+        {
+            Toast.makeText(ShopProductDetail.this,"check your Internet connection",Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         categoryList = new ArrayList<>();
         partnerId = getIntent().getStringExtra("partner_id");
@@ -127,6 +137,7 @@ public class ShopProductDetail extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, error.toString());
 
+                Toast.makeText(ShopProductDetail.this,"server problem",Toast.LENGTH_SHORT).show();
 
             }
         }) {

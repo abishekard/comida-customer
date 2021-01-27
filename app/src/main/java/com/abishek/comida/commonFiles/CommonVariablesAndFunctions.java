@@ -1,5 +1,8 @@
 package com.abishek.comida.commonFiles;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+
 public class CommonVariablesAndFunctions {
 
     private static final String TAG = "CommanVarAndFun";
@@ -17,6 +20,15 @@ public class CommonVariablesAndFunctions {
     public static final String BASE_LOGIN = BASE+"login/with/otp";
     public static final String BASE_SIGN_UP = BASE+"create/new";
     public static final String BASE_PROFILE_SHOW = BASE+"show/profile/";
+    public static final String BASE_PROFILE_EDIT = BASE+"edit/profile";
+    public static final String BASE_ADDRESS_SHOW = BASE+"show/address/";
+    public static final String BASE_ADDRESS_ADD = BASE+"create/address";
 
+
+
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
+    }
 
 }

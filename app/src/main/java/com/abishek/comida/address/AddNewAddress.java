@@ -22,14 +22,24 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.abishek.comida.MainActivity;
 import com.abishek.comida.R;
+import com.abishek.comida.commonFiles.LoginSessionManager;
+import com.abishek.comida.commonFiles.MySingleton;
+import com.android.volley.AuthFailureError;
 import com.android.volley.BuildConfig;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -47,12 +57,27 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_ADDRESS_ADD;
+import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_ADDRESS_SHOW;
+import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.NO_OF_RETRY;
+import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.RETRY_SECONDS;
+import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.isNetworkAvailable;
+import static com.abishek.comida.commonFiles.LoginSessionManager.ACCESS_TOKEN;
+import static com.abishek.comida.commonFiles.LoginSessionManager.TOKEN_TYPE;
 
 public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallback,
         GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, LocationListener, Animation.AnimationListener, View.OnClickListener {
 
+    private final String TAG = this.getClass().getSimpleName();
     public static int map_to_addsignup = 0;
     SupportMapFragment mapFragment;
     CameraPosition cameraPosition;
@@ -87,11 +112,25 @@ public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallba
     private TextView homeAddressView,officeAddressView,otherAddressView,btnCancel;
     private LinearLayout addressType,otherType;
 
+    private Button btnSave;
+    private TextView landmarkView,localityView;
+    private String addressName="home";
+    private EditText otherTypeName;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
        // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_add_new_address);
+
+
+        if(!isNetworkAvailable(AddNewAddress.this))
+        {
+            Toast.makeText(AddNewAddress.this,"check your Internet connection",Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         try {
             findViewByID();
@@ -148,6 +187,8 @@ public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallba
                             locality_city = addressList.get(0).getLocality();
                             sub_localoty = addressList.get(0).getSubLocality();
                             country_code = addressList.get(0).getCountryCode();
+                            latitude = addressList.get(0).getLatitude()+"";
+                            longitude = addressList.get(0).getLongitude()+"";
                             if (locality != null && country != null) {
                                 resutText.setText(locality + "");
                                 String[] temp = locality.toString().split(",");
@@ -207,7 +248,7 @@ public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallba
             locationView = findViewById(R.id.location);
             img_back = findViewById(R.id.btn_back);
             resutText = findViewById(R.id.detailed_location);
-            ic_save_proceed = findViewById(R.id.btn_save_address);
+          //  ic_save_proceed = findViewById(R.id.btn_save_address);
             img_pin = findViewById(R.id.pin);
 
             addressType=findViewById(R.id.address_type);
@@ -216,6 +257,11 @@ public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallba
             homeAddressView = findViewById(R.id.home_address);
             officeAddressView = findViewById(R.id.office_address);
             otherAddressView = findViewById(R.id.other_address);
+            otherTypeName = findViewById(R.id.other_type_name);
+            landmarkView = findViewById(R.id.landmark);
+            localityView = findViewById(R.id.locality);
+
+            btnSave = findViewById(R.id.btn_save_address);
 
             addressType.setOnClickListener(this);
             otherType.setOnClickListener(this);
@@ -223,6 +269,7 @@ public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallba
             homeAddressView.setOnClickListener(this);
             officeAddressView.setOnClickListener(this);
             otherAddressView.setOnClickListener(this);
+            btnSave.setOnClickListener(this);
 
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map);
@@ -373,8 +420,10 @@ public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallba
                 setAddressTypeBackground((TextView) v);
                 break;
             case R.id.home_address:setAddressTypeBackground((TextView) v);
+                                  addressName="home";
                 break;
             case R.id.office_address:setAddressTypeBackground((TextView) v);
+                                   addressName = "office";
                 break;
             case R.id.address_type:
 
@@ -388,6 +437,8 @@ public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallba
                 officeAddressView.setBackgroundColor(ContextCompat.getColor(AddNewAddress.this,R.color.transparent));
                 otherAddressView.setBackgroundColor(ContextCompat.getColor(AddNewAddress.this,R.color.transparent));
                 break;
+            case R.id.btn_save_address: getDataFromUi();
+                break;
 
         }
     }
@@ -400,4 +451,132 @@ public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallba
 
         textView.setBackground(ContextCompat.getDrawable(AddNewAddress.this,R.drawable.circle_grey));
     }
+
+
+
+    public void getDataFromUi()
+    {
+        if(resutText.getText().toString().toLowerCase().equals("loading..."))
+        {
+            Toast.makeText(AddNewAddress.this,"Network problem. Try again later.",Toast.LENGTH_SHORT).show();
+            return;
+        }
+       String landmark = landmarkView.getText().toString();
+       String locality = localityView.getText().toString();
+       if(otherType.getVisibility()==View.VISIBLE)
+       {
+           addressName=otherTypeName.getText().toString();
+       }
+
+       if(landmark.equals(""))
+       {
+           Toast.makeText(AddNewAddress.this,"please enter a landmark",Toast.LENGTH_SHORT).show();
+           return;
+       }
+        if(locality.equals(""))
+        {
+            Toast.makeText(AddNewAddress.this,"please enter a locality",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(longitude.equals("")||latitude.equals(""))
+        {
+            Toast.makeText(AddNewAddress.this,"Something went wrong",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(addressName.equals(""))
+        {
+            Toast.makeText(AddNewAddress.this,"please select address type",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        saveAddressToDatabase();
+    }
+
+    public void saveAddressToDatabase() {
+
+
+        Log.e(TAG, "saveAddress : called");
+
+        btnSave.setEnabled(false);
+        final String URL = BASE_ADDRESS_ADD;
+
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.e(TAG, response);
+
+
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    int status = jsonObject.getInt("status");
+
+                    if(status != 200)
+                    {
+                        Toast.makeText(AddNewAddress.this,"Something went wrong (server)",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    Toast.makeText(AddNewAddress.this,"Address Added",Toast.LENGTH_SHORT).show();
+                    finish();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.toString());
+                }
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, error.toString());
+
+                Toast.makeText(AddNewAddress.this,"server problem",Toast.LENGTH_SHORT).show();
+
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> header = new HashMap<>();
+
+                String tokenType = new LoginSessionManager(AddNewAddress.this).getUserDetailsFromSP().get(TOKEN_TYPE);
+                String accessToken = new LoginSessionManager(AddNewAddress.this).getUserDetailsFromSP().get(ACCESS_TOKEN);
+
+                header.put("Accept", "application/json");
+                header.put("Authorization", tokenType + " " + accessToken);
+                Log.e(TAG,"Authorization: "+ tokenType + " " + accessToken);
+
+
+                return header;
+            }
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                HashMap<String,String> params = new HashMap<>();
+                params.put("address",locality);
+                params.put("state",state);
+                params.put("city",city);
+                params.put("pincode",pincode);
+                params.put("latitude",latitude);
+                params.put("longitude",longitude);
+                params.put("landmark",landmarkView.getText().toString());
+                params.put("locality",localityView.getText().toString());
+                params.put("address_type",addressName);
+
+
+                return params;
+            }
+
+        };
+
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy((RETRY_SECONDS),
+                NO_OF_RETRY, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        MySingleton.getInstance(AddNewAddress.this).addToRequestQueue(stringRequest);
+
+
+    }
+
 }

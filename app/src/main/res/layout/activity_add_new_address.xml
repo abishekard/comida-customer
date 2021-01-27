@@ -135,7 +135,7 @@
             android:layout_marginTop="10dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edittext_location_landmark"
+                android:id="@+id/landmark"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/gotham_medium"
@@ -153,7 +153,7 @@
             android:layout_marginTop="10dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edittext_location_locality"
+                android:id="@+id/locality"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
@@ -229,7 +229,7 @@
         >
 
     <EditText
-
+        android:id="@+id/other_type_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:maxLines="1"

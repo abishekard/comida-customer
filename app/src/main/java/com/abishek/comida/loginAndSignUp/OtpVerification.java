@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.abishek.comida.R;
+import com.abishek.comida.address.AddNewAddress;
 import com.abishek.comida.commonFiles.LoginSessionManager;
 import com.abishek.comida.commonFiles.MySingleton;
 import com.abishek.comida.home.HomePage;
@@ -146,6 +147,7 @@ public class OtpVerification extends AppCompatActivity implements View.OnClickLi
     {
 
 
+        btnVerify.setEnabled(false);
         Log.e(TAG, "getOtpForLogin : called");
 
         final String URL = BASE_LOGIN;
@@ -167,9 +169,10 @@ public class OtpVerification extends AppCompatActivity implements View.OnClickLi
                     String userId =data.getString("id");
                     String email = data.getString("email");
                     String mobile = data.getString("mobile");
+                    String profileImage = data.getString("profile_image");
 
                     LoginSessionManager loginSessionManager = new LoginSessionManager(OtpVerification.this);
-                    loginSessionManager.createLoginSession(tokeType,accessToken,userId,name,mobile,email);
+                    loginSessionManager.createLoginSession(tokeType,accessToken,userId,name,mobile,email,profileImage);
                     Toast.makeText(OtpVerification.this,"Login Successful",Toast.LENGTH_SHORT).show();
                     finish();
 
@@ -189,7 +192,7 @@ public class OtpVerification extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, error.toString());
-
+                Toast.makeText(OtpVerification.this,"server problem",Toast.LENGTH_SHORT).show();
 
             }
         }) {

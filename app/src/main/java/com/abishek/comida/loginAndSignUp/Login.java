@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.abishek.comida.R;
+import com.abishek.comida.address.AddNewAddress;
 import com.abishek.comida.commonFiles.MySingleton;
 import com.abishek.comida.home.HomePage;
 import com.abishek.comida.home.product.RestaurantModel;
@@ -88,6 +89,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     {
 
 
+        btnLogin.setEnabled(false);
         Log.e(TAG, "getOtpForLogin : called");
 
         final String URL = BASE_LOGIN_OTP;
@@ -133,7 +135,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, error.toString());
-
+                Toast.makeText(Login.this,"server problem",Toast.LENGTH_SHORT).show();
 
             }
         }) {
