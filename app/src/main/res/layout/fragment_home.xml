@@ -33,6 +33,9 @@
                     android:text="Location"
                     android:textColor="@color/black"
                     android:textSize="18dp"
+                    android:singleLine="true"
+                    android:layout_marginEnd="100dp"
+                    android:ellipsize="none"
                     android:drawableLeft="@drawable/ic_location"
                     android:fontFamily="@font/montserrat_semi_bold"
                     android:textStyle="bold"/>
@@ -42,6 +45,9 @@
                     android:layout_height="wrap_content"
                     android:text="Detailed Location"
                     android:textSize="12sp"
+                    android:singleLine="true"
+                    android:ellipsize="none"
+                    android:layout_marginEnd="100dp"
                     android:layout_marginTop="2dp"
                     android:textStyle="bold"/>
             </LinearLayout>

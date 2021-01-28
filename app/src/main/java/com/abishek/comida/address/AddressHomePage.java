@@ -100,12 +100,18 @@ public class AddressHomePage extends AppCompatActivity {
     private List<AddressModel> addressList;
     private LinearLayout noAddressLayout;
     private RecyclerView addressRecyclerView;
+    private ArrayList<String> addressTypeList;
+    private TextView titleView;
+    private int from=0;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_address_home_page);
+
+        from = getIntent().getIntExtra("from",0);
+        Log.e(TAG,".....from: "+from);
 
         if(!isNetworkAvailable(AddressHomePage.this))
         {
@@ -117,15 +123,24 @@ public class AddressHomePage extends AppCompatActivity {
         btnAddAddress = findViewById(R.id.btn_add_address);
         noAddressLayout = findViewById(R.id.no_address_layout);
         addressRecyclerView = findViewById(R.id.address_recycler);
+        titleView = findViewById(R.id.title);
+        btnAddAddress.setEnabled(false);
         userId = new LoginSessionManager(AddressHomePage.this).getUserDetailsFromSP().get("user_id");
         addressList = new ArrayList<>();
+
 
         btnAddAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(AddressHomePage.this, AddNewAddress.class));
+
+                startActivity(new Intent(AddressHomePage.this, AddNewAddress.class).putExtra("addressTypes",addressTypeList));
             }
         });
+
+        if(from==2)
+        {
+            titleView.setText("Select an Address");
+        }
     }
 
 
@@ -144,6 +159,8 @@ public class AddressHomePage extends AppCompatActivity {
 
 
                 try {
+                    addressList = new ArrayList<>();
+                    addressTypeList = new ArrayList<>();
                     JSONObject jsonObject = new JSONObject(response);
 
                     int status = jsonObject.getInt("status");
@@ -160,8 +177,11 @@ public class AddressHomePage extends AppCompatActivity {
                        // Toast.makeText(AddressHomePage.this,"no address exists \n please add an address",Toast.LENGTH_SHORT).show();
                         noAddressLayout.setVisibility(View.VISIBLE);
                         addressRecyclerView.setVisibility(View.GONE);
+                        btnAddAddress.setEnabled(true);
                         return;
                     }
+
+
 
                     for (int i = 0 ;i<data.length();i++)
                     {
@@ -178,10 +198,12 @@ public class AddressHomePage extends AppCompatActivity {
                         String addressType = childJson.getString("address_type");
 
                         addressList.add(new AddressModel(id,address,state,city,pinCode,landmark,locality,lat,lng,addressType));
+                        addressTypeList.add(addressType);
 
                     }
 
                     setDataToView();
+                    btnAddAddress.setEnabled(true);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -231,7 +253,7 @@ public class AddressHomePage extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        addressList = new ArrayList<>();
+
         userId = new LoginSessionManager(AddressHomePage.this).getUserDetailsFromSP().get("user_id");
         noAddressLayout.setVisibility(View.GONE);
         addressRecyclerView.setVisibility(View.VISIBLE);
@@ -241,7 +263,7 @@ public class AddressHomePage extends AppCompatActivity {
 
     public void setDataToView()
     {
-        AddressAdapter addressAdapter = new AddressAdapter(addressList,AddressHomePage.this);
+        AddressAdapter addressAdapter = new AddressAdapter(addressList,AddressHomePage.this,from);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(AddressHomePage.this);
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
         addressRecyclerView.setLayoutManager(linearLayoutManager);

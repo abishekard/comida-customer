@@ -22,6 +22,7 @@
 
 
             <ImageView
+                android:id="@+id/address_type_face"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10sp"
@@ -30,6 +31,7 @@
 
 
         <LinearLayout
+            android:id="@+id/card"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -66,14 +68,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"/>
-                <TextView
-                    android:id="@+id/edit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="EDIT"
-                    android:textStyle="bold"
-                    android:textColor="@color/green"
-                    />
 
                 <TextView
                     android:id="@+id/delete"

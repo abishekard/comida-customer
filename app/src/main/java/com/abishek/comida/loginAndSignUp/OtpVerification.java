@@ -1,5 +1,6 @@
 package com.abishek.comida.loginAndSignUp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -24,6 +25,11 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,6 +37,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_FCM;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_LOGIN;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_LOGIN_OTP;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.NO_OF_RETRY;
@@ -174,7 +181,10 @@ public class OtpVerification extends AppCompatActivity implements View.OnClickLi
                     LoginSessionManager loginSessionManager = new LoginSessionManager(OtpVerification.this);
                     loginSessionManager.createLoginSession(tokeType,accessToken,userId,name,mobile,email,profileImage);
                     Toast.makeText(OtpVerification.this,"Login Successful",Toast.LENGTH_SHORT).show();
-                    finish();
+
+                    registerFcm(userId);
+
+
 
 
 
@@ -215,4 +225,108 @@ public class OtpVerification extends AppCompatActivity implements View.OnClickLi
 
 
     }
+
+    public void registerFcm(String id)
+    {
+
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+                        registerFcmToDatabase(id,token);
+
+
+                    }
+                });
+
+
+
+
+        FirebaseMessaging.getInstance().subscribeToTopic("all")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "welcome";
+                        if (!task.isSuccessful()) {
+                            msg = "topic error";
+                        }
+
+
+                    }
+                });
+    }
+
+    public void registerFcmToDatabase(String id,String fcm)
+    {
+
+
+        btnVerify.setEnabled(false);
+        Log.e(TAG, "getOtpForLogin : called");
+
+        final String URL = BASE_FCM;
+
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.e(TAG, "........."+response);
+
+
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    int status = jsonObject.getInt("status");
+                    if(status==300)
+                    {
+                        Log.e(TAG,"........fcm registered");
+                    }
+
+
+
+                    finish();
+
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.toString());
+                }
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, error.toString());
+                Toast.makeText(OtpVerification.this,"server problem",Toast.LENGTH_SHORT).show();
+
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String,String> params = new HashMap<>();
+                params.put("id",id);
+                params.put("fcm",fcm);
+                Log.e(TAG,"....fcm: "+fcm);
+
+                return params;
+            }
+
+        };
+
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy((RETRY_SECONDS),
+                NO_OF_RETRY, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        MySingleton.getInstance(OtpVerification.this).addToRequestQueue(stringRequest);
+
+
+    }
+
 }

@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.abishek.comida.R;
+import com.abishek.comida.address.AddressHomePage;
 import com.abishek.comida.cart.cartRoom.CartDaoAccess;
 import com.abishek.comida.cart.cartRoom.ComidaDatabase;
 import com.abishek.comida.commonFiles.LoginSessionManager;
@@ -101,7 +102,7 @@ public class CartHome extends AppCompatActivity implements View.OnClickListener,
                     startActivity(new Intent(CartHome.this, Login.class));
                     return;
                 }
-                startActivity(new Intent(CartHome.this,Checkout.class));
+                startActivity(new Intent(CartHome.this, AddressHomePage.class).putExtra("from",2));
                 break;
         }
     }

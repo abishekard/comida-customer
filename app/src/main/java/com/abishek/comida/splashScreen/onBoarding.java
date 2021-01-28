@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.abishek.comida.R;
+import com.abishek.comida.commonFiles.LoginSessionManager;
 import com.abishek.comida.home.HomePage;
 import com.abishek.comida.loginAndSignUp.Login;
 
@@ -36,6 +37,14 @@ public class onBoarding extends AppCompatActivity implements ViewPager.OnPageCha
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        boolean shown = new LoginSessionManager(onBoarding.this).onBoardingShown();
+
+        if(!shown)
+        {
+            startActivity(new Intent(onBoarding.this, HomePage.class));
+            finish();
+            return;
+        }
 
 
         // Next two lines help in getting rid off status bar
@@ -48,6 +57,7 @@ public class onBoarding extends AppCompatActivity implements ViewPager.OnPageCha
 
 
         setContentView(R.layout.activity_on_boarding);
+        new LoginSessionManager(onBoarding.this).setOnBoardingShown();
 
         mFragmentList = new ArrayList<>();
 
@@ -76,7 +86,7 @@ public class onBoarding extends AppCompatActivity implements ViewPager.OnPageCha
                 int id = viewPager.getCurrentItem();
                 if(id == 2){
                     startActivity(new Intent(onBoarding.this, HomePage.class));
-                  //  finish();
+                    finish();
                 }
                 else{
                     viewPager.setCurrentItem(viewPager.getCurrentItem()+1);
@@ -90,7 +100,7 @@ public class onBoarding extends AppCompatActivity implements ViewPager.OnPageCha
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(onBoarding.this,HomePage.class));
-              //  finish();
+                finish();
             }
         });
     }

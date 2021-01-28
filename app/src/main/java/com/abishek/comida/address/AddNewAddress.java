@@ -62,6 +62,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,6 +117,8 @@ public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallba
     private TextView landmarkView,localityView;
     private String addressName="home";
     private EditText otherTypeName;
+    private ProgressBar progressBar;
+    private ArrayList<String> addressTypeList;
 
 
     @Override
@@ -123,6 +126,9 @@ public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallba
         super.onCreate(savedInstanceState);
        // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_add_new_address);
+
+        addressTypeList = (ArrayList<String>)getIntent().getSerializableExtra("addressTypes");
+        Log.e(TAG,"....addressTypes: "+addressTypeList.toString());
 
 
         if(!isNetworkAvailable(AddNewAddress.this))
@@ -175,6 +181,7 @@ public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallba
                     LatLng latLng = mMap.getCameraPosition().target;
                     Geocoder geocoder = new Geocoder(AddNewAddress.this);
                     resutText.setText("Loading...");
+                    progressBar.setVisibility(View.VISIBLE);
                     try {
                         List<Address> addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
                         if (addressList != null && addressList.size() > 0) {
@@ -198,6 +205,7 @@ public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallba
                                 resutText.setText("Location could not be fetched...");
                              //   pro_bar.setVisibility(View.GONE);
                             }
+                            progressBar.setVisibility(View.GONE);
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -250,6 +258,7 @@ public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallba
             resutText = findViewById(R.id.detailed_location);
           //  ic_save_proceed = findViewById(R.id.btn_save_address);
             img_pin = findViewById(R.id.pin);
+            progressBar = findViewById(R.id.progress_bar);
 
             addressType=findViewById(R.id.address_type);
             otherType = findViewById(R.id.other_type);
@@ -486,6 +495,12 @@ public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallba
         if(addressName.equals(""))
         {
             Toast.makeText(AddNewAddress.this,"please select address type",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(addressTypeList.contains(addressName))
+        {
+            Toast.makeText(AddNewAddress.this,"address type already exists",Toast.LENGTH_SHORT).show();
             return;
         }
 

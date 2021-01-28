@@ -92,6 +92,9 @@ public class LoginSessionManager {
     public boolean onBoardingShown() {
         return pref.getBoolean(ON_BOARDING_SHOWN, false);
     }
+    public void setOnBoardingShown() {
+        editor.putBoolean(ON_BOARDING_SHOWN,true);
+    }
 
     public HashMap<String, String> getUserDetailsFromSP() {
 

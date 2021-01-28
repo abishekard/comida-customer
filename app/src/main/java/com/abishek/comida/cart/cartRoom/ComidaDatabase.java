@@ -10,10 +10,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.abishek.comida.R;
 import com.abishek.comida.home.product.FoodModel;
+import com.abishek.comida.notification.MyNotificationTable;
+import com.abishek.comida.notification.NotificationDao;
 
 
-
-@Database(entities = {FoodModel.class}, version = 1, exportSchema = false)
+@Database(entities = {FoodModel.class, MyNotificationTable.class}, version = 1, exportSchema = false)
 public abstract class ComidaDatabase extends RoomDatabase {
 
 
@@ -36,4 +37,5 @@ public abstract class ComidaDatabase extends RoomDatabase {
 
 
     public abstract CartDaoAccess getDaoAccess();
+    public abstract NotificationDao getMyNotificationDao();
 }
