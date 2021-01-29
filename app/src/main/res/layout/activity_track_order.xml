@@ -95,6 +95,7 @@
             android:textColor="@color/grey"
             />
         <TextView
+            android:id="@+id/order_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="#1234567890123456"
@@ -150,6 +151,7 @@
                 android:layout_weight="1"/>
             <Button
 
+                android:id="@+id/btn_done"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/background_btn_login"

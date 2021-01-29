@@ -5,10 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".myOrder.NewOrder">
+    tools:context=".myOrder.OrderHistory">
 
-   <!--<include layout="@layout/my_order_list_design"/>
-    <include layout="@layout/my_order_list_design"/>-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/order_recycler_view"
@@ -16,5 +14,7 @@
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
         />
+
+
 
 </LinearLayout>

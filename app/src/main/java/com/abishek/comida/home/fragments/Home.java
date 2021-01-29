@@ -57,6 +57,7 @@ import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_AL
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_RESTAURANT_ALL;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.NO_OF_RETRY;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.RETRY_SECONDS;
+import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.isNetworkAvailable;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -126,6 +127,12 @@ public class Home extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        if(!isNetworkAvailable(getContext()))
+        {
+            Toast.makeText(getContext(),"check your Internet connection",Toast.LENGTH_SHORT).show();
+
+        }
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 

@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:gravity="center_vertical"
+        android:layout_marginBottom="10dp"
         android:orientation="horizontal">
 
         <ImageView
@@ -23,13 +24,15 @@
             android:src="@drawable/ic_arrow_left" />
 
         <TextView
+            android:id="@+id/order_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="2dp"
             android:text="#123456789"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_marginTop="2dp"
+
 
             />
     </LinearLayout>
@@ -53,52 +56,56 @@
                 android:layout_marginEnd="20dp"
                 android:orientation="horizontal">
 
-                <androidx.cardview.widget.CardView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    app:cardCornerRadius="10dp"
-                    app:cardUseCompatPadding="true">
 
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/shop_image"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        app:shapeAppearanceOverlay="@style/roundedCornerImageView"
                         android:src="@mipmap/sample2" />
 
 
-                </androidx.cardview.widget.CardView>
+
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
                     android:layout_margin="15dp"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
                     <TextView
+                        android:id="@+id/shop_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_semi_bold"
                         android:text="King Burgers"
-                        android:textStyle="bold"
                         android:textColor="@color/grey"
-                        android:fontFamily="@font/montserrat_semi_bold"/>
+                        android:textStyle="bold" />
+
                     <TextView
+                        android:id="@+id/speciality"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Burger Western Food"
 
-                        android:textColor="@color/grey"
-                        />
+                        android:textColor="@color/grey" />
+
                     <Space
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
+                        android:layout_weight="1" />
+
                     <TextView
+                        android:id="@+id/shop_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="No 03, 4th Lane, Newyork"
-                        android:textColor="@color/grey"
                         android:drawableLeft="@drawable/ic_location2"
                         android:drawablePadding="8dp"
-                        android:textSize="12sp"
-                        />
+                        android:text="No 03, 4th Lane, Newyork"
+                        android:textColor="@color/grey"
+                        android:textSize="12sp" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -120,6 +127,15 @@
                     android:layout_marginTop="10dp"
                     android:text="Delivery Address" />
 
+                <TextView
+                    android:id="@+id/address_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:text="address type"
+                    android:textSize="12sp" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -128,18 +144,17 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/delivered_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
+                        android:layout_marginEnd="100dp"
                         android:layout_weight="1"
-                        android:maxLines="2"
                         android:text="653 Nostrand Ave.,Brooklyn, NY 11216"
                         android:textColor="@color/black"
                         android:textStyle="bold"
-                        android:layout_marginEnd="100dp"
 
                         />
-
 
 
                 </LinearLayout>
@@ -149,144 +164,177 @@
                 android:id="@+id/track_order"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Track  order"
-                android:background="@drawable/rectangle_red_outline"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="20dp"
-                android:textColor="@color/colorPrimary"/>
+                android:background="@drawable/rectangle_red_outline"
+                android:text="Track  order"
+                android:textColor="@color/colorPrimary" />
 
 
-            <include layout="@layout/my_order_list_design2"/>
-            <include layout="@layout/my_order_list_design2"/>
-            <include layout="@layout/my_order_list_design2"/>
-            <include layout="@layout/my_order_list_design2"/>
-
+            <!--       <include layout="@layout/my_order_list_design2"/>
+                   <include layout="@layout/my_order_list_design2"/>
+                   <include layout="@layout/my_order_list_design2"/>
+                   <include layout="@layout/my_order_list_design2"/>-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/order_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="30dp"
                 android:layout_marginEnd="40dp"
-                android:layout_marginStart="20dp"
-                >
+                android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
+                    android:text="Sub Total"
                     android:textColor="@color/black"
-                    android:text="Sub Total"/>
+                    android:textStyle="bold" />
+
                 <Space
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:text="₹ 250"/>
+                    android:text="₹ "
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/sub_total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="250"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="40dp"
-                android:layout_marginStart="20dp"
-                >
+                android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
+                    android:text="Discount"
                     android:textColor="@color/black"
-                    android:text="Discount"/>
+                    android:textStyle="bold" />
+
                 <Space
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
+                    android:text="- ₹ "
                     android:textColor="@color/green"
-                    android:text="- ₹ 50"/>
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/discount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="50"
+                    android:textColor="@color/green"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="40dp"
-                android:layout_marginStart="20dp"
-                >
+                android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
+                    android:text="Delivery Cost"
                     android:textColor="@color/black"
-                    android:text="Delivery Cost"/>
+                    android:textStyle="bold" />
+
                 <Space
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:text="₹ 25"/>
+                    android:text="₹ "
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="25"
+                    android:textStyle="bold" />
             </LinearLayout>
+
             <View
-                android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="30dp"
                 android:background="@color/grey" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="40dp"
-                android:layout_marginStart="20dp"
-                >
+                android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
+                    android:text="Total"
                     android:textColor="@color/black"
-                    android:text="Total"/>
+                    android:textStyle="bold" />
+
                 <Space
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:text="₹ 225"/>
+                    android:text="₹ "
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="225"
+                    android:textStyle="bold" />
             </LinearLayout>
 
 
-
-
-
-
-
             <Button
+                android:id="@+id/btn_done"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="50dp"
+                android:layout_marginBottom="30dp"
                 android:background="@drawable/background_btn_login"
                 android:text="Done"
-                android:layout_gravity="center_horizontal"
-                android:textColor="@color/white"
-                android:layout_marginTop="50dp"
-                android:layout_marginBottom="30dp"/>
+                android:textColor="@color/white" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

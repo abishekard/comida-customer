@@ -30,6 +30,10 @@ public class CommonVariablesAndFunctions {
     public static final String BASE_ADDRESS_ADD = BASE+"create/address";
     public static final String BASE_ADDRESS_DELETE = BASE+"delete/address/";
     public static final String BASE_FCM = BASE+"store/fcm";
+    public static final String BASE_PLACE_ORDER = BASE+"placeOrder";
+    public static final String BASE_NEW_ORDER = BASE+"orders/new/";
+    public static final String BASE_COMPLETE_ORDER = BASE+"orders/completed/";
+    public static final String BASE_ORDER_DETAIL = BASE+"order/detail/";
 
 
 

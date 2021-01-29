@@ -21,10 +21,9 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-
                 android:orientation="vertical">
                 <TextView
                     android:id="@+id/location"
@@ -34,7 +33,6 @@
                     android:textColor="@color/black"
                     android:textSize="18dp"
                     android:singleLine="true"
-                    android:layout_marginEnd="100dp"
                     android:ellipsize="none"
                     android:drawableLeft="@drawable/ic_location"
                     android:fontFamily="@font/montserrat_semi_bold"
@@ -47,7 +45,6 @@
                     android:textSize="12sp"
                     android:singleLine="true"
                     android:ellipsize="none"
-                    android:layout_marginEnd="100dp"
                     android:layout_marginTop="2dp"
                     android:textStyle="bold"/>
             </LinearLayout>

@@ -1,13 +1,17 @@
 package com.abishek.comida.cart;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.abishek.comida.R;
 
@@ -26,6 +30,12 @@ public class OrderConfirmedDialog extends DialogFragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private Button btnTrackOrder;
+    private TextView btnBackToHome;
+
+    private ConfirmationDialogListener confirmationDialogListener;
+    private int backDone;
 
     public OrderConfirmedDialog() {
         // Required empty public constructor
@@ -62,7 +72,31 @@ public class OrderConfirmedDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_order_confirmed_dialog, container, false);
+        View view = inflater.inflate(R.layout.fragment_order_confirmed_dialog, container, false);
+
+        backDone=0;
+
+        btnTrackOrder = view.findViewById(R.id.track_order);
+        btnBackToHome = view.findViewById(R.id.back_to_home);
+
+        btnTrackOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                backDone=1;
+                confirmationDialogListener.trackOrderClicked();
+
+
+            }
+        });
+        btnBackToHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                backDone=1;
+                confirmationDialogListener.backToHomeClicked();
+            }
+        });
+
+        return view;
     }
 
     @Override
@@ -72,4 +106,24 @@ public class OrderConfirmedDialog extends DialogFragment {
                 .getAttributes().windowAnimations = R.style.DialogAnimation;
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        confirmationDialogListener = (ConfirmationDialogListener)context;
+    }
+
+
+
+    public interface ConfirmationDialogListener{
+        void backToHomeClicked();
+        void trackOrderClicked();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(backDone==0)
+        confirmationDialogListener.backToHomeClicked();
+    }
 }

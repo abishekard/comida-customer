@@ -34,7 +34,7 @@ public class MyOrders extends AppCompatActivity {
         mTabLayout = findViewById(R.id.tabs_services);
         mFragmentList = new ArrayList<>();
         mFragmentList.add(new NewOrder());
-        mFragmentList.add(new NewOrder());
+        mFragmentList.add(new OrderHistory());
 
         setViewPager();
     }

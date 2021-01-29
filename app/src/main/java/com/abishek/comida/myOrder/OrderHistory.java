@@ -1,9 +1,7 @@
 package com.abishek.comida.myOrder;
 
-import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +15,6 @@ import android.widget.Toast;
 import com.abishek.comida.R;
 import com.abishek.comida.commonFiles.LoginSessionManager;
 import com.abishek.comida.commonFiles.MySingleton;
-import com.abishek.comida.home.product.RestaurantModel;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -33,33 +30,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_COMPLETE_ORDER;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_NEW_ORDER;
-import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_RESTAURANT_ALL;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.NO_OF_RETRY;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.RETRY_SECONDS;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link NewOrder#newInstance} factory method to
+ * Use the {@link OrderHistory#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewOrder extends Fragment {
+public class OrderHistory extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private static final String TAG = "NewOrders" ;
+
+    private static final String TAG = "orderHistory" ;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-   // private CardView card;
 
     private String userId;
     private List<MyOrderModel> orderList;
 
-    public NewOrder() {
+
+    public OrderHistory() {
         // Required empty public constructor
     }
 
@@ -69,11 +67,11 @@ public class NewOrder extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment NewOrder.
+     * @return A new instance of fragment OrderHistory.
      */
     // TODO: Rename and change types and number of parameters
-    public static NewOrder newInstance(String param1, String param2) {
-        NewOrder fragment = new NewOrder();
+    public static OrderHistory newInstance(String param1, String param2) {
+        OrderHistory fragment = new OrderHistory();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -93,8 +91,9 @@ public class NewOrder extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view= inflater.inflate(R.layout.fragment_order_history, container, false);
 
-        View view = inflater.inflate(R.layout.fragment_new_order, container, false);
         orderList = new ArrayList<>();
 
         userId = new LoginSessionManager(getContext()).getUserDetailsFromSP().get("user_id");
@@ -102,9 +101,9 @@ public class NewOrder extends Fragment {
 
 
         fetchNewOrders(view);
+
         return view;
     }
-
 
     public void fetchNewOrders(View view)
     {
@@ -112,7 +111,7 @@ public class NewOrder extends Fragment {
 
         Log.e(TAG, "fetchAllProductList : called");
 
-        final String URL = BASE_NEW_ORDER+userId;
+        final String URL = BASE_COMPLETE_ORDER+userId;
 
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -205,7 +204,7 @@ public class NewOrder extends Fragment {
         RecyclerView orderRecyclerView = v.findViewById(R.id.order_recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
-        OrderAdapter orderAdapter = new OrderAdapter(orderList,getContext(),"new");
+        OrderAdapter orderAdapter = new OrderAdapter(orderList,getContext(),"history");
         orderRecyclerView.setLayoutManager(linearLayoutManager);
         orderRecyclerView.setAdapter(orderAdapter);
         orderAdapter.notifyDataSetChanged();
