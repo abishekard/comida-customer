@@ -11,6 +11,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.location.LocationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -40,6 +41,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -81,7 +83,7 @@ public class Home extends Fragment implements View.OnClickListener {
     private static int LOCATION_REQUEST_COUNT = 0;
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
     private static final float MARKER_ZOOM = 16f;
     private Boolean mLocationPermissionsGranted = false;
 
@@ -301,8 +303,8 @@ public class Home extends Fragment implements View.OnClickListener {
                         String speciality = childJson.getString("speciality");
                         String shopImage = childJson.getString("shop_image");
                         String address=childJson.getString("address");
-                        String lat=childJson.getString("lat");
-                        String lng=childJson.getString("long");
+                        String lat=childJson.getString("latitude");
+                        String lng=childJson.getString("longitude");
                         String openTime=childJson.getString("open_time");
                         String closeTime=childJson.getString("close_time");
                         String available=childJson.getString("available");
@@ -370,6 +372,24 @@ public class Home extends Fragment implements View.OnClickListener {
         restaurantRecycler.setAdapter(allRestaurantAdapter);
         restaurantRecycler.setLayoutManager(linearLayoutManager);
         allRestaurantAdapter.notifyDataSetChanged();
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && requestCode == 100) {
+            if (ContextCompat.checkSelfPermission(getContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+                getDeviceLocation();
+            }
+        } else {
+            requestLocationPermission();
+        }
+
 
     }
 
