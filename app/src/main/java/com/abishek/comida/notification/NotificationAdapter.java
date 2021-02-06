@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -44,12 +45,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.titleView.setText(notificationTableList.get(position).getTitle());
         holder.timeView.setText(getFormattedDate(TAG,notificationTableList.get(position).getUnixTime())
                 +", "+ getFormattedTime(TAG,notificationTableList.get(position).getUnixTime()));
-        holder.card.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        holder.bodyView.setText(notificationTableList.get(position).getDes());
 
     }
 
@@ -62,15 +58,24 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
         private TextView titleView;
         private TextView timeView;
-        private LinearLayout card;
+        private TextView bodyView;
+         RelativeLayout viewBackground;
+         LinearLayout viewForeground;
 
         public NotificationViewHolder(@NonNull View v) {
             super(v);
 
             titleView = v.findViewById(R.id.title);
             timeView = v.findViewById(R.id.time);
-            card = v.findViewById(R.id.card);
+            bodyView = v.findViewById(R.id.body);
+            viewBackground = v.findViewById(R.id.view_background);
+            viewForeground = v.findViewById(R.id.view_foreground);
         }
+    }
+
+    public void removeItem(int position) {
+        notificationTableList.remove(position);
+        notifyItemRemoved(position);
     }
 
 }

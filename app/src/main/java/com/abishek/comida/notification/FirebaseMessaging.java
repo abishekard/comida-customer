@@ -11,6 +11,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
@@ -39,6 +40,8 @@ import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE;
 public class FirebaseMessaging extends FirebaseMessagingService {
     String TAG = "FirebaseMessaging";
 
+    private RemoteMessage message;
+
     @Override
     public void onNewToken(@NonNull String s) {
         Log.e(TAG, "onNewToken: "+s);
@@ -61,11 +64,13 @@ public class FirebaseMessaging extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
 
+        Log.e(TAG,"...........data_noti "+remoteMessage.getData());
         Log.e(TAG, "MessageReceived: Complete message --> "+remoteMessage );
-        Log.e(TAG, "MessageReceived: From --> "+remoteMessage.getNotification().getImageUrl().getPath());
-        Log.e(TAG, "MessageReceived: Data contents --> "+remoteMessage.getNotification().getBody());
-        Log.e(TAG, "MessageReceived: Notification contents --> "+remoteMessage.getNotification().getTitle());
+        Log.e(TAG, "MessageReceived: From --> "+remoteMessage.getData().get("title"));
+        Log.e(TAG, "MessageReceived: Data contents --> "+remoteMessage.getData().get("body"));
+        Log.e(TAG, "MessageReceived: Notification contents --> "+remoteMessage.getData().get("image"));
 
+        message = remoteMessage;
         // Check message for any special behaviour
        /* if (remoteMessage.getData().containsKey("special")) {
             processForSpecialMessage(remoteMessage.getData());
@@ -74,11 +79,11 @@ public class FirebaseMessaging extends FirebaseMessagingService {
 */
 
         // Make and show notification using data contents
-        showNotification(remoteMessage.getNotification().getTitle(),remoteMessage.getNotification().getBody(),remoteMessage.getNotification().getImageUrl().getPath());
+        showNotification(remoteMessage.getData().get("title"),remoteMessage.getData().get("body"),remoteMessage.getData().get("image"));
 
         // Store this notification in our local database to display in NOTIFICATION section
 
-        storeNotification(remoteMessage.getNotification().getTitle(),remoteMessage.getNotification().getBody(),remoteMessage.getNotification().getImageUrl().getPath());
+        storeNotification(remoteMessage.getData().get("title"),remoteMessage.getData().get("body"),remoteMessage.getData().get("image"));
 
 
         // Sending Broadcast to NotificationHomePage.class so that it user is on that activity, the activity will know about it
@@ -87,6 +92,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         sendBroadcast();
         autoRefresh();
         super.onMessageReceived(remoteMessage);
+
 
 
     }
@@ -118,7 +124,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         // Building notification
         final NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)     /* channel id  */
-                        .setSmallIcon(R.mipmap.face)              /* small battery like icon */
+                        .setSmallIcon(R.mipmap.ic_launcher)              /* small battery like icon */
                         .setContentTitle(title)                 /* Winner Winner    */
                         .setContentText(body)                   /* You have won...   */
                         .setStyle(new NotificationCompat.BigTextStyle()     /* display multiline text  */
@@ -207,4 +213,6 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         // Sending the broadcast
         sendBroadcast(broadcastIntent);
     }
+
+
 }

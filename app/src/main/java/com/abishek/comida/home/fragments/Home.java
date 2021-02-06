@@ -2,6 +2,7 @@ package com.abishek.comida.home.fragments;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -153,6 +154,9 @@ public class Home extends Fragment implements View.OnClickListener {
             Toast.makeText(getContext(),"Plese Enable GPS ",Toast.LENGTH_SHORT).show();
 
         fetchProductList(view);
+
+        SharedPreferences pref = getActivity().getSharedPreferences("msg",0);
+        Log.e(TAG,"......."+pref.getString("noti","aa"));
         return view;
     }
 

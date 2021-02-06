@@ -1,6 +1,7 @@
 package com.abishek.comida.notification;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,13 +14,15 @@ import com.abishek.comida.R;
 import com.abishek.comida.cart.cartRoom.ComidaDatabase;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class NotificationHomePage extends AppCompatActivity {
+public class NotificationHomePage extends AppCompatActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
     private static final String TAG = "NotificationHomepage";
     private List<MyNotificationTable> notificationList;
     private RecyclerView notificationRecycler;
+    private NotificationAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +32,17 @@ public class NotificationHomePage extends AppCompatActivity {
         notificationList = new ArrayList<>();
 
         new FetchNotificationsFromRoom(ComidaDatabase.getDatabase(NotificationHomePage.this)).execute();
+    }
+
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+
+        if (viewHolder instanceof NotificationAdapter.NotificationViewHolder) {
+            int notificationIdInRoom = notificationList.get(viewHolder.getAdapterPosition()).getNotiId();
+            mAdapter.removeItem(viewHolder.getAdapterPosition());
+
+            new DeleteNotificationFromRoom(ComidaDatabase.getDatabase(NotificationHomePage.this),notificationIdInRoom).execute();
+        }
     }
 
     class FetchNotificationsFromRoom extends AsyncTask<Void, Void, Void> {
@@ -69,12 +83,46 @@ public class NotificationHomePage extends AppCompatActivity {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(NotificationHomePage.this);
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
-        NotificationAdapter mAdapter = new NotificationAdapter(notificationList, NotificationHomePage.this);
+        mAdapter = new NotificationAdapter(notificationList, NotificationHomePage.this);
 
         notificationRecycler.setLayoutManager(linearLayoutManager);
         notificationRecycler.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
+
+           ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.RIGHT, NotificationHomePage.this);
+           new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(notificationRecycler);
           }
 
     }
+
+
+    class DeleteNotificationFromRoom extends AsyncTask<Void,Void,Void> {
+
+        private NotificationDao notificationDao;
+        private Integer id;
+
+        public DeleteNotificationFromRoom(ComidaDatabase instance,Integer notificationId) {
+            notificationDao = instance.getMyNotificationDao();
+            this.id=notificationId;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if(notificationList !=null){
+                if(id==-1)
+                    notificationDao.deleteAllNotifications();
+                else
+                    notificationDao.deleteNotificationById(id);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+           // fetchNotificationFromRoomAndSetAdapter();
+        }
+    }
+
+
 }

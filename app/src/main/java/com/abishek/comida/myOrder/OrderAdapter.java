@@ -18,6 +18,8 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_IMAGE;
+import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.getDate;
+import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.getTime;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHolder> {
 
@@ -43,8 +45,11 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
 
+
+        String dateTime[] = orderList.get(position).getCreateAt().split(" ");
+        String formattedDateTime = getDate(dateTime[0])+"  "+getTime(dateTime[1]);
         holder.orderIdView.setText("#"+orderList.get(position).getOrderId());
-        holder.dateView.setText(orderList.get(position).getCreateAt());
+        holder.dateView.setText(formattedDateTime);
         holder.priceView.setText(orderList.get(position).getTotalPrice());
         holder.addressView.setText(orderList.get(position).getDeliveredAddress());
         Picasso.get().load(BASE_IMAGE+orderList.get(position).getImage()).into(holder.foodImageView);
