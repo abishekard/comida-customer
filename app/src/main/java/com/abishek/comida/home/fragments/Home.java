@@ -17,12 +17,17 @@ import androidx.core.location.LocationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
+import android.os.Handler;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +36,7 @@ import com.abishek.comida.address.AddNewAddress;
 import com.abishek.comida.cart.CartHome;
 import com.abishek.comida.commonFiles.MySingleton;
 import com.abishek.comida.home.adapters.AllRestaurantAdapter;
+import com.abishek.comida.home.adapters.CustomSlidePagerAdapter;
 import com.abishek.comida.home.product.FoodModel;
 import com.abishek.comida.home.adapters.AllProductAdapter;
 import com.abishek.comida.home.product.RestaurantModel;
@@ -55,6 +61,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_ALL_PRODUCTS;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_RESTAURANT_ALL;
@@ -74,7 +82,7 @@ public class Home extends Fragment implements View.OnClickListener {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    private static final String TAG ="HomeFragment" ;
+    private static final String TAG = "HomeFragment";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -88,13 +96,21 @@ public class Home extends Fragment implements View.OnClickListener {
     private static final float MARKER_ZOOM = 16f;
     private Boolean mLocationPermissionsGranted = false;
 
-    private TextView locationView,detailedLocationView;
+    private TextView locationView, detailedLocationView;
 
     private List<RestaurantModel> restaurantList;
 
     private RecyclerView restaurantRecycler;
+    private ProgressBar progressBar;
 
 
+    private ViewPager viewPager;
+    private ArrayList<Integer> pagerList;
+    private LinearLayout layout_dot;
+    private TextView[] dot;
+    private int currentPosition = 0;
+    private int custom_position = 0;
+    private Timer timer;
 
     public Home() {
         // Required empty public constructor
@@ -131,9 +147,8 @@ public class Home extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        if(!isNetworkAvailable(getContext()))
-        {
-            Toast.makeText(getContext(),"check your Internet connection",Toast.LENGTH_SHORT).show();
+        if (!isNetworkAvailable(getContext())) {
+            Toast.makeText(getContext(), "check your Internet connection", Toast.LENGTH_SHORT).show();
 
         }
 
@@ -145,26 +160,29 @@ public class Home extends Fragment implements View.OnClickListener {
         cartIcon.setOnClickListener(this);
         locationView = view.findViewById(R.id.location);
         detailedLocationView = view.findViewById(R.id.detailed_location);
+        progressBar = view.findViewById(R.id.progress_bar);
 
-        if(hasLocationPermission())
+        if (hasLocationPermission())
             getDeviceLocation();
         else
             requestLocationPermission();
-        if(!isLocationEnabled())
-            Toast.makeText(getContext(),"Plese Enable GPS ",Toast.LENGTH_SHORT).show();
+        if (!isLocationEnabled())
+            Toast.makeText(getContext(), "Plese Enable GPS ", Toast.LENGTH_SHORT).show();
+
 
         fetchProductList(view);
 
-        SharedPreferences pref = getActivity().getSharedPreferences("msg",0);
-        Log.e(TAG,"......."+pref.getString("noti","aa"));
+        setUpSlideShow(view);
+
+
         return view;
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId())
-        {
-            case R.id.cart: startActivity(new Intent(getContext(), CartHome.class));
+        switch (v.getId()) {
+            case R.id.cart:
+                startActivity(new Intent(getContext(), CartHome.class));
                 break;
         }
     }
@@ -190,8 +208,8 @@ public class Home extends Fragment implements View.OnClickListener {
                                 //  moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 17f);
 
 
-                                Log.e(TAG,currentLocation.toString());
-                                setAddress(currentLocation.getLatitude(),currentLocation.getLongitude());
+                                Log.e(TAG, currentLocation.toString());
+                                setAddress(currentLocation.getLatitude(), currentLocation.getLongitude());
                             }
                         }
                     }
@@ -222,10 +240,8 @@ public class Home extends Fragment implements View.OnClickListener {
     }
 
 
-
-    private void setAddress(double lat,double lng) {
+    private void setAddress(double lat, double lng) {
         Log.e(TAG, "called : setAddress");
-
 
 
         Geocoder geocoder;
@@ -233,20 +249,18 @@ public class Home extends Fragment implements View.OnClickListener {
         List<Address> addresses = null;
 
         try {
-            addresses = geocoder.getFromLocation(lat,lng, 1);
+            addresses = geocoder.getFromLocation(lat, lng, 1);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        Log.e(TAG,"address found="+addresses);
+        Log.e(TAG, "address found=" + addresses);
 
 
-        if(addresses==null ) {
+        if (addresses == null) {
             detailedLocationView.setText("Location not found");
             return;
-        }
-
-        else if(addresses.size()==0){
+        } else if (addresses.size() == 0) {
             detailedLocationView.setText("location not found");
             return;
         }
@@ -256,11 +270,10 @@ public class Home extends Fragment implements View.OnClickListener {
         int countComma = 0;
         int indexOf2ndComma = -1;
 
-        int i=0;
+        int i = 0;
 
-        for (i=0;i<address.length();i++)
-        {
-            if(address.charAt(i) == ',')
+        for (i = 0; i < address.length(); i++) {
+            if (address.charAt(i) == ',')
                 countComma++;
             if (countComma == 3) {
                 break;
@@ -268,8 +281,8 @@ public class Home extends Fragment implements View.OnClickListener {
         }
         indexOf2ndComma = i;
 
-        address = address.substring(0,indexOf2ndComma);
-        Log.e(TAG,"........"+address);
+        address = address.substring(0, indexOf2ndComma);
+        Log.e(TAG, "........" + address);
         detailedLocationView.setText(address);
         String[] temp = address.split(",");
         locationView.setText(temp[0]);
@@ -280,8 +293,7 @@ public class Home extends Fragment implements View.OnClickListener {
     }
 
 
-    public void fetchProductList(View view)
-    {
+    public void fetchProductList(View view) {
 
 
         Log.e(TAG, "fetchAllProductList : called");
@@ -289,6 +301,7 @@ public class Home extends Fragment implements View.OnClickListener {
         final String URL = BASE_RESTAURANT_ALL;
 
 
+        progressBar.setVisibility(View.VISIBLE);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -299,24 +312,23 @@ public class Home extends Fragment implements View.OnClickListener {
                     JSONObject jsonObject = new JSONObject(response);
 
                     JSONArray subJson = jsonObject.getJSONArray("data");
-                    for(int i=0;i<subJson.length();i++)
-                    {
+                    for (int i = 0; i < subJson.length(); i++) {
                         JSONObject childJson = subJson.getJSONObject(i);
-                        String shopId =childJson.getString("id");
-                        String shopName=childJson.getString("shop_name");
+                        String shopId = childJson.getString("id");
+                        String shopName = childJson.getString("shop_name");
                         String speciality = childJson.getString("speciality");
                         String shopImage = childJson.getString("shop_image");
-                        String address=childJson.getString("address");
-                        String lat=childJson.getString("latitude");
-                        String lng=childJson.getString("longitude");
-                        String openTime=childJson.getString("open_time");
-                        String closeTime=childJson.getString("close_time");
-                        String available=childJson.getString("available");
-                        String rating=childJson.getString("rating");
+                        String address = childJson.getString("address");
+                        String lat = childJson.getString("latitude");
+                        String lng = childJson.getString("longitude");
+                        String openTime = childJson.getString("open_time");
+                        String closeTime = childJson.getString("close_time");
+                        String available = childJson.getString("available");
+                        String rating = childJson.getString("rating");
 
 
-                        restaurantList.add(new RestaurantModel(shopId,shopName,shopImage,speciality,
-                                address,lat,lng,closeTime,openTime,available,rating));
+                        restaurantList.add(new RestaurantModel(shopId, shopName, shopImage, speciality,
+                                address, lat, lng, closeTime, openTime, available, rating));
                     }
 
 
@@ -334,7 +346,7 @@ public class Home extends Fragment implements View.OnClickListener {
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, error.toString());
 
-                Toast.makeText(getContext(),"server problem",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "server problem", Toast.LENGTH_SHORT).show();
             }
         }) {
             @Override
@@ -368,15 +380,16 @@ public class Home extends Fragment implements View.OnClickListener {
 
     }
 
-    private void setDataToView(View v)
-    {
+    private void setDataToView(View v) {
         restaurantRecycler = v.findViewById(R.id.all_restaurant_recycler);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        AllRestaurantAdapter allRestaurantAdapter = new AllRestaurantAdapter(restaurantList,getContext());
-        restaurantRecycler.setAdapter(allRestaurantAdapter);
+        linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
+        AllRestaurantAdapter allRestaurantAdapter = new AllRestaurantAdapter(restaurantList, getContext());
         restaurantRecycler.setLayoutManager(linearLayoutManager);
+        restaurantRecycler.setAdapter(allRestaurantAdapter);
+        restaurantRecycler.setHasFixedSize(true);
         allRestaurantAdapter.notifyDataSetChanged();
-
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -397,4 +410,94 @@ public class Home extends Fragment implements View.OnClickListener {
 
     }
 
+    void setUpSlideShow(View view) {
+        viewPager = (ViewPager) view.findViewById(R.id.advertise_pager);
+
+        layout_dot = (LinearLayout) view.findViewById(R.id.layout_dot);
+
+
+        pagerList = new ArrayList<>();
+
+        pagerList.add(R.drawable.ic_spl_a);
+        pagerList.add(R.drawable.ic_spl_b);
+        pagerList.add(R.drawable.ic_spl_c);
+
+
+        CustomSlidePagerAdapter pagerAdapter3 = new CustomSlidePagerAdapter(getContext(), pagerList);
+        viewPager.setAdapter(pagerAdapter3);
+        viewPager.setPageMargin(10);
+
+        addDot(0, layout_dot);
+
+
+        // whenever the page changes
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                addDot(i, layout_dot);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
+
+
+        createSlideShow();
+    }
+
+
+    public void addDot(int page_position, LinearLayout layout_dot) {
+        dot = new TextView[pagerList.size()];
+        layout_dot.removeAllViews();
+
+        for (int i = 0; i < dot.length; i++) {
+            ;
+            dot[i] = new TextView(getContext());
+            dot[i].setText(Html.fromHtml("&#9673;"));
+            dot[i].setTextSize(10);
+            dot[i].setTextColor(getResources().getColor(R.color.grey));
+            layout_dot.addView(dot[i]);
+        }
+        //active dot
+        dot[page_position].setTextColor(getResources().getColor(R.color.colorPrimary));
+    }
+
+    private void createSlideShow() {
+        final Handler handler = new Handler();
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (currentPosition == 3) {
+                    currentPosition = 0;
+                    viewPager.setCurrentItem(currentPosition);
+
+
+                } else {
+                    viewPager.setCurrentItem(currentPosition++);
+
+                }
+            }
+        };
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(runnable);
+            }
+        }, 2000, 2000);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (timer != null)
+            timer.cancel();
+    }
 }

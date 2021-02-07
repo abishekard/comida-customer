@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class CommonVariablesAndFunctions {
 
-    private static final String TAG = "CommanVarAndFun";
+    private static final String TAG = "CommonVarAndFun";
 
     public static final int RETRY_SECONDS = 10000;
     public static final int NO_OF_RETRY = 2;

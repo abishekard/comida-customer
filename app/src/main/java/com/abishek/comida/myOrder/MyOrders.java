@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.abishek.comida.R;
+import com.abishek.comida.home.HomePage;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -16,83 +17,41 @@ import java.util.ArrayList;
 public class MyOrders extends AppCompatActivity {
 
     private ArrayList<String> titles;
-    private TabLayout mTabLayout;
+    private TabLayout tabLayout;
     private int selected_position;
     private ArrayList<Fragment> mFragmentList;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_orders);
 
-        selected_position = getIntent().getIntExtra("viewpagerId",0);
-        titles = new ArrayList<>();
-        titles.add("New Order");
-        titles.add("Order History");
+
+        setTabLayout();
 
 
-        mTabLayout = findViewById(R.id.tabs_services);
-        mFragmentList = new ArrayList<>();
-        mFragmentList.add(new NewOrder());
-        mFragmentList.add(new OrderHistory());
-
-        setViewPager();
     }
 
 
-    private void setViewPager() {
+    public void setTabLayout() {
 
-        ViewPager viewPager = findViewById(R.id.viewpager_car_services);
+        tabLayout = findViewById(R.id.tab_layout);
+        viewPager = findViewById(R.id.view_pager);
 
-        MyOrdersPagerAdapter adapter = new MyOrdersPagerAdapter(
-                getSupportFragmentManager(), mFragmentList);
-        mTabLayout.setupWithViewPager(viewPager);
+        tabLayout.removeAllTabs();
+        tabLayout.addTab(tabLayout.newTab().setText("New Order"));
+        tabLayout.addTab(tabLayout.newTab().setText("History"));
+
+
+        final MyOrdersPagerAdapter adapter = new MyOrdersPagerAdapter(MyOrders.this, getSupportFragmentManager(),
+                tabLayout.getTabCount(), viewPager);
         viewPager.setAdapter(adapter);
-        viewPager.setCurrentItem(selected_position);
-        //  refreshFragment(adapter, selected_position);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                //  refreshFragment(adapter, position);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-
-        setUpCustomTabs();
-
-    }
-
-
-    private void setUpCustomTabs() {
-
-        for (int i = 0; i < titles.size(); i++) {
-            View view = getLayoutInflater().inflate(R.layout.custom_tabview2, null);
-
-            TextView tv = view.findViewById(R.id.tab_title);
-            tv.setText(titles.get(i));
-
-
-            TabLayout.Tab tab = mTabLayout.getTabAt(i);
-
-            if (tab != null)
-                tab.setCustomView(view);//set custom view
-        }
-
-
-
-        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-
+                viewPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
@@ -101,7 +60,6 @@ public class MyOrders extends AppCompatActivity {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
         });
 

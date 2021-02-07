@@ -1,45 +1,40 @@
 package com.abishek.comida.myOrder;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import java.util.ArrayList;
 
 public class MyOrdersPagerAdapter extends FragmentPagerAdapter {
-
-    private ArrayList<Fragment> mFragmentList;
-    public MyOrdersPagerAdapter(@NonNull FragmentManager fm, ArrayList<Fragment> mFragmentList) {
-        super(fm);
-        this.mFragmentList = mFragmentList;
+    Context context;
+    int totalTabs;
+    ViewPager viewPager;
+    public MyOrdersPagerAdapter(Context c, FragmentManager fm, int totalTabs, ViewPager viewPager) {
+        super(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        context = c;
+        this.totalTabs = totalTabs;
+        this.viewPager = viewPager;
     }
-
-    @NonNull
     @Override
     public Fragment getItem(int position) {
-        return mFragmentList.get(position);
-    }
-
-    @Override
-    public int getCount() {
-        return mFragmentList.size();
-    }
-
-    @Nullable
-    @Override
-    public CharSequence getPageTitle(int position) {
-
         switch (position) {
             case 0:
-                return "New Order";
+                return new NewOrder();
             case 1:
-                return "Order History";
+                return new OrderHistory();
 
-
+            default:
+                return null;
         }
-
-        return super.getPageTitle(position);
+    }
+    @Override
+    public int getCount() {
+        return totalTabs;
     }
 }
