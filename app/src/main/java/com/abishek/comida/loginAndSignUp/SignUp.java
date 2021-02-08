@@ -2,6 +2,7 @@ package com.abishek.comida.loginAndSignUp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,6 +41,8 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
     private Button btnSignUp;
     private EditText edtEmail,edtMobile,edtName;
 
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +57,10 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
 
         btnLogin.setOnClickListener(this);
         btnSignUp.setOnClickListener(this);
+
+        progressDialog = new ProgressDialog(SignUp.this);
+        progressDialog.setMessage("Please Wait...");
+        progressDialog.setCancelable(false);
     }
 
     @Override
@@ -111,6 +118,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
         btnSignUp.setEnabled(false);
         Log.e(TAG, "SignUp : called");
 
+        progressDialog.show();
         final String URL = BASE_SIGN_UP;
 
 
@@ -128,6 +136,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                     {
                         startActivity(new Intent(SignUp.this,OtpVerification.class).putExtra("email",email));
                         Toast.makeText(SignUp.this,"Account created and Otp sent to your email",Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
                         finish();
                         return;
 
@@ -135,6 +144,8 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                     if(status==300)
                     {
                         Toast.makeText(SignUp.this,"email or mobile is already taken",Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
+                        btnSignUp.setEnabled(true);
                         return;
                     }
 
@@ -153,6 +164,8 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, error.toString());
                 Toast.makeText(SignUp.this,"server problem",Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+                btnSignUp.setEnabled(true);
 
             }
         }) {

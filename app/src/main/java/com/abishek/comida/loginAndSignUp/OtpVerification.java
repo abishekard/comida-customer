@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -55,6 +56,8 @@ public class OtpVerification extends AppCompatActivity implements View.OnClickLi
     private Button btnVerify;
     private String email;
 
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +76,10 @@ public class OtpVerification extends AppCompatActivity implements View.OnClickLi
         btnVerify.setOnClickListener(this);
 
         email = getIntent().getStringExtra("email");
+
+        progressDialog = new ProgressDialog(OtpVerification.this);
+        progressDialog.setMessage("Wait...");
+        progressDialog.setCancelable(false);
     }
 
     @Override
@@ -155,6 +162,7 @@ public class OtpVerification extends AppCompatActivity implements View.OnClickLi
 
 
         btnVerify.setEnabled(false);
+        progressDialog.show();
         Log.e(TAG, "getOtpForLogin : called");
 
         final String URL = BASE_LOGIN;
@@ -203,6 +211,7 @@ public class OtpVerification extends AppCompatActivity implements View.OnClickLi
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, error.toString());
                 Toast.makeText(OtpVerification.this,"server problem",Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
 
             }
         }) {
@@ -290,6 +299,7 @@ public class OtpVerification extends AppCompatActivity implements View.OnClickLi
 
 
 
+                    progressDialog.dismiss();
                     finish();
 
 
@@ -306,6 +316,7 @@ public class OtpVerification extends AppCompatActivity implements View.OnClickLi
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, error.toString());
                 Toast.makeText(OtpVerification.this,"server problem",Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
 
             }
         }) {

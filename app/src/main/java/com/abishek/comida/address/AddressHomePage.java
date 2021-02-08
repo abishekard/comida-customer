@@ -32,6 +32,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -104,6 +105,8 @@ public class AddressHomePage extends AppCompatActivity {
     private TextView titleView;
     private int from=0;
 
+    private ProgressBar progressBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +126,7 @@ public class AddressHomePage extends AppCompatActivity {
         btnAddAddress = findViewById(R.id.btn_add_address);
         noAddressLayout = findViewById(R.id.no_address_layout);
         addressRecyclerView = findViewById(R.id.address_recycler);
+        progressBar = findViewById(R.id.progress_bar);
         titleView = findViewById(R.id.title);
         btnAddAddress.setEnabled(false);
         userId = new LoginSessionManager(AddressHomePage.this).getUserDetailsFromSP().get("user_id");
@@ -151,6 +155,7 @@ public class AddressHomePage extends AppCompatActivity {
 
         final String URL = BASE_ADDRESS_SHOW + userId;
 
+        progressBar.setVisibility(View.VISIBLE);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
@@ -168,6 +173,7 @@ public class AddressHomePage extends AppCompatActivity {
                     if(status != 200)
                     {
                         Toast.makeText(AddressHomePage.this,"Some thing went wrong",Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.GONE);
                         return;
                     }
 
@@ -178,6 +184,7 @@ public class AddressHomePage extends AppCompatActivity {
                         noAddressLayout.setVisibility(View.VISIBLE);
                         addressRecyclerView.setVisibility(View.GONE);
                         btnAddAddress.setEnabled(true);
+                        progressBar.setVisibility(View.GONE);
                         return;
                     }
 
@@ -204,6 +211,7 @@ public class AddressHomePage extends AppCompatActivity {
 
                     setDataToView();
                     btnAddAddress.setEnabled(true);
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -269,5 +277,6 @@ public class AddressHomePage extends AppCompatActivity {
         addressRecyclerView.setLayoutManager(linearLayoutManager);
         addressRecyclerView.setAdapter(addressAdapter);
         addressAdapter.notifyDataSetChanged();
+        progressBar.setVisibility(View.GONE);
     }
 }

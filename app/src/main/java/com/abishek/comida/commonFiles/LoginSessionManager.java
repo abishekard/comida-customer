@@ -1,14 +1,21 @@
 package com.abishek.comida.commonFiles;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
 
+import com.abishek.comida.cart.cartRoom.CartDaoAccess;
+import com.abishek.comida.cart.cartRoom.ComidaDatabase;
 import com.abishek.comida.loginAndSignUp.Login;
+import com.abishek.comida.notification.NotificationDao;
+import com.google.firebase.iid.FirebaseInstanceId;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 
@@ -116,14 +123,14 @@ public class LoginSessionManager {
 
     public void logoutUser() {
 
-       /* - new Thread(() -> {
+         new Thread(() -> {
             try {
                 FirebaseInstanceId.getInstance().deleteToken(getFcmToken(), "");
                 FirebaseInstanceId.getInstance().deleteInstanceId();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }).start();*/
+        }).start();
         //-  context.stopService(new Intent(context, PhoneService.class));
         editor.clear();
         editor.commit();
@@ -136,11 +143,12 @@ public class LoginSessionManager {
         // Add new Flag to start new Activity
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        //-   new ClearRoom(MekVahanDatabase.getInstance(context)).execute();
+        new ClearRoom(ComidaDatabase.getDatabase(context)).execute();
 
         // Staring Login Activity
         Toast.makeText(context, "Logged Out", Toast.LENGTH_SHORT).show();
         context.startActivity(i);
+        ((Activity)context).finish();
 
     }
 
@@ -148,15 +156,6 @@ public class LoginSessionManager {
         return pref.getBoolean(IS_LOGIN, false);
     }
 
-
-  /*  public int getDefaultVehicleId() {
-        return pref.getInt(DEFAULT_VEHICLE_ID, -1);
-    }
-
-    public void setDefaultVehicleId(int vehicleId) {
-        editor.putInt(DEFAULT_VEHICLE_ID, vehicleId);
-        editor.commit();
-    }*/
 
     public void setFCMToken(String s) {
         editor.putString(FCM_TOKEN, s);
@@ -209,4 +208,23 @@ public class LoginSessionManager {
         }
 
     }*/
+
+    class ClearRoom extends AsyncTask<Void,Void,Void> {
+
+        private final NotificationDao notificationDao;
+        private final CartDaoAccess cartDaoAccess;
+
+        public ClearRoom (ComidaDatabase instance) {
+            notificationDao = instance.getMyNotificationDao();
+            cartDaoAccess = instance.getDaoAccess();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            notificationDao.deleteAllNotifications();
+            cartDaoAccess.deleteAll();
+            return null;
+        }
+
+    }
 }

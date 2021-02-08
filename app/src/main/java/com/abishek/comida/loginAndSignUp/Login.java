@@ -3,12 +3,14 @@ package com.abishek.comida.loginAndSignUp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +50,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private TextView btnRegister;
     private Button btnLogin;
     private EditText edtEmail;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         edtEmail = findViewById(R.id.edt_email);
         btnRegister.setOnClickListener(this);
         btnLogin.setOnClickListener(this);
+
+        progressDialog = new ProgressDialog(Login.this);
+        progressDialog.setMessage("Wait...");
+        progressDialog.setCancelable(false);
     }
 
     @Override
@@ -95,6 +102,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     {
 
 
+        progressDialog.show();
         btnLogin.setEnabled(false);
         Log.e(TAG, "getOtpForLogin : called");
 
@@ -115,6 +123,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     {
                         startActivity(new Intent(Login.this,OtpVerification.class).putExtra("email",email));
                         Toast.makeText(Login.this,"Otp sent to your email",Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
                         finish();
                         return;
                     }
@@ -122,6 +131,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     {
                         startActivity(new Intent(Login.this,SignUp.class));
                         Toast.makeText(Login.this,"email does not exist.\nPlease create a new Account.",Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
+                        btnLogin.setEnabled(true);
                         finish();
                         return;
                     }
@@ -142,6 +153,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, error.toString());
                 Toast.makeText(Login.this,"server problem",Toast.LENGTH_SHORT).show();
+                btnLogin.setEnabled(true);
+                progressDialog.dismiss();
 
             }
         }) {
