@@ -188,8 +188,8 @@ public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallba
                             locality = addressList.get(0).getAddressLine(0);
                             country = addressList.get(0).getCountryName();
                             state = addressList.get(0).getAdminArea();
-                            sub_admin = addressList.get(0).getSubAdminArea();
-                            city = addressList.get(0).getFeatureName();
+                            city = addressList.get(0).getSubAdminArea();
+                           // city = addressList.get(0).getFeatureName();
                             pincode = addressList.get(0).getPostalCode();
                             locality_city = addressList.get(0).getLocality();
                             sub_localoty = addressList.get(0).getSubLocality();
@@ -580,6 +580,7 @@ public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallba
                 params.put("landmark",landmarkView.getText().toString());
                 params.put("locality",localityView.getText().toString());
                 params.put("address_type",addressName);
+                params.put("local_city",locality_city);
 
 
                 return params;

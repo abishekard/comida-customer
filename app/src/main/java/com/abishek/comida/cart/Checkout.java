@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +31,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.razorpay.PaymentResultListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,8 +45,11 @@ import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_PL
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_RESTAURANT_ALL;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.NO_OF_RETRY;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.RETRY_SECONDS;
+import static com.abishek.comida.commonFiles.LoginSessionManager.ACCESS_TOKEN;
+import static com.abishek.comida.commonFiles.LoginSessionManager.TOKEN_TYPE;
 
-public class Checkout extends AppCompatActivity implements View.OnClickListener, OrderConfirmedDialog.ConfirmationDialogListener {
+public class Checkout extends AppCompatActivity implements View.OnClickListener,
+        OrderConfirmedDialog.ConfirmationDialogListener, PaymentResultListener {
 
     private Button btnConfirm;
     private String addressId;
@@ -57,6 +63,9 @@ public class Checkout extends AppCompatActivity implements View.OnClickListener,
     private int partnerId,total;
     private   SharedPreferences pref;
     private SharedPreferences.Editor editor;
+    private RadioGroup paymentMethodGroup;
+    private String paymentMethod;
+    private String generatedOrderId;
 
 
     @Override
@@ -64,6 +73,9 @@ public class Checkout extends AppCompatActivity implements View.OnClickListener,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout);
 
+        paymentMethod = "online";
+        generatedOrderId = System.currentTimeMillis() / 10L + "";
+        Log.e(TAG,"generatedOrderId  "+generatedOrderId);
 
         btnConfirm = findViewById(R.id.btn_confirm_order);
         btnChange = findViewById(R.id.change_address);
@@ -73,6 +85,7 @@ public class Checkout extends AppCompatActivity implements View.OnClickListener,
         subTotalView = findViewById(R.id.sub_total);
         discountView = findViewById(R.id.discount);
         totalView = findViewById(R.id.total);
+        paymentMethodGroup = findViewById(R.id.payment_method);
 
 
         addressId = getIntent().getStringExtra("address_id");
@@ -89,12 +102,33 @@ public class Checkout extends AppCompatActivity implements View.OnClickListener,
 
         pref = getSharedPreferences("partner_info",0);
         editor = pref.edit();
+
+
+        paymentMethodGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton btn = findViewById(checkedId);
+                if(btn.getText().toString().toLowerCase().equals("pay now"))
+                    paymentMethod="online";
+                if(btn.getText().toString().toLowerCase().equals("pay on delivery"))
+                    paymentMethod="cod";
+                Log.e(TAG,"...."+paymentMethod);
+            }
+        });
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_confirm_order: getAllDetailsToPlaceOrder();
+            case R.id.btn_confirm_order:
+                if(paymentMethod.equals("cod"))
+                   getAllDetailsToPlaceOrder();
+                else
+                {
+                    total  = subTotal-discount+25;
+                    startPayment((total*100)+"");
+                }
+
                // showConfirmationDialog();
 
                 break;
@@ -113,6 +147,45 @@ public class Checkout extends AppCompatActivity implements View.OnClickListener,
     @Override
     public void trackOrderClicked() {
           clearingStackAndMoveToTrackOrder();
+    }
+
+    public void startPayment(String amountInPaise) {
+
+        final Activity activity = this;
+
+        final com.razorpay.Checkout co = new com.razorpay.Checkout();
+
+
+        try {
+            JSONObject options = new JSONObject();
+            options.put("name", "Comida");
+            options.put("description", "Order-ID #"+generatedOrderId);
+            //You can omit the image option to fetch the image from dashboard
+            options.put("image", "https://s3.amazonaws.com/rzp-mobile/images/rzp.png");
+            options.put("currency", "INR");
+            options.put("amount", amountInPaise);
+
+            JSONObject preFill = new JSONObject();
+            preFill.put("email", new LoginSessionManager(Checkout.this).getUserDetailsFromSP().get("email"));
+            preFill.put("contact",new LoginSessionManager(Checkout.this).getUserDetailsFromSP().get("mobile"));
+            options.put("prefill", preFill);
+
+            co.open(activity, options);
+        } catch (Exception e) {
+            Toast.makeText(activity, "Error in payment: " + e.getMessage(), Toast.LENGTH_SHORT)
+                    .show();
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void onPaymentSuccess(String s) {
+           getAllDetailsToPlaceOrder();
+       // Toast.makeText(Checkout.this,"success",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPaymentError(int i, String s) {
+         Toast.makeText(Checkout.this,"Payment Failed",Toast.LENGTH_SHORT).show();
     }
 
     class FetchCartItems extends AsyncTask<Void, Void, Void> {
@@ -194,7 +267,8 @@ public class Checkout extends AppCompatActivity implements View.OnClickListener,
     }
 
 
-    public void placeOrder(String userId, String addressId, String productId, String quantity, String total, String partnerId) {
+    public void placeOrder(String userId, String addressId, String productId, String quantity,
+                           String total, String partnerId) {
 
 
         btnConfirm.setEnabled(false);
@@ -223,6 +297,7 @@ public class Checkout extends AppCompatActivity implements View.OnClickListener,
                     }
 
                     Toast.makeText(Checkout.this, "server problem", Toast.LENGTH_SHORT).show();
+                    btnConfirm.setEnabled(true);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -235,21 +310,19 @@ public class Checkout extends AppCompatActivity implements View.OnClickListener,
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, error.toString());
-
+                btnConfirm.setEnabled(true);
                 Toast.makeText(Checkout.this, "server problem", Toast.LENGTH_SHORT).show();
             }
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                /*Map<String, String> header = new HashMap<>();
+                Map<String, String> header = new HashMap<>();
 
-                String tokenType = new LoginSessionManager(getContext()).getUserDetailsFromSP().get(TOKEN_TYPE);
-                String accessToken = new LoginSessionManager(getContext()).getUserDetailsFromSP().get(ACCESS_TOKEN);
-
-                //String fullKey = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjcxNDdmNGFjNWFlN2IzZDM4MmYyNTAwNWVhNTIwOGUyNDAzNjYwNzMyOWMyYjZiYWQ1YTlhMmNlZTEzZDI3ZTgzN2RkOTY5NzcxNWNhMzUxIn0.eyJhdWQiOiIxIiwianRpIjoiNzE0N2Y0YWM1YWU3YjNkMzgyZjI1MDA1ZWE1MjA4ZTI0MDM2NjA3MzI5YzJiNmJhZDVhOWEyY2VlMTNkMjdlODM3ZGQ5Njk3NzE1Y2EzNTEiLCJpYXQiOjE1NTExOTc0MjcsIm5iZiI6MTU1MTE5NzQyNywiZXhwIjoxNTgyNzMzNDI3LCJzdWIiOiI4NSIsInNjb3BlcyI6W119.kLmk7mEukKdoS9e_v31VQX29ypn7hJb7qAJvKA_GqeiYEYe2EQ9zLTd1IwO-S31CofoypnJ-LvAT7D4I0EZ9iYM1AS5A6-7bWH3-h01-glLQubbfedhvlg0xfT60s2r1onxlEMUnt-0kB2tbYgX_df4zJPExUhHRpzlnLNChzC3r1QD1dzgn-814GjxlQkwfgv_5dsKzyMlvVCHiTDg2z35h2uiWeRuVhmznbUGaGCWcxPwHpNV4k9pHOH9yrCwkjJuHlcSIiXD7W_QsRnzEa_dY6wASdymtGqHb99c3kfWmiKKwngAC9GY56OeMP0vLnYpXOAspu5rDlQkLCzCeh58KnqbqMUrQ0bZ3ChTaeATXM_fncQiByfMgAAfiVfu8GpKsnQKSYobzcqrqjmAgPTNEcq5ba4BCUuw1ysv0LodTqHGUHsSNsiZfx3GyqLoyOCMWY5oWO4M4saOTo3pUSGPSq15BsqRQXqbvzshxk9ysaAU1K9dZj-AZpy4mUxf3y4UX8-EADqJmYV7ywEph_FveDbdWNNUF72bqbTg8DTxwJ6V53cEOsxbmNb82jFJnz1vSxLFDDXv9Vvf23W5hm4Io2Ogxv8wyE5vNUgL2XepFrGwWWANEsp4fLebzfgFD3045vkrcfRPc164LVKHdLyaHhxB8TrYeK9TOqeEfk7M";
+                String tokenType = new LoginSessionManager(Checkout.this).getUserDetailsFromSP().get(TOKEN_TYPE);
+                String accessToken = new LoginSessionManager(Checkout.this).getUserDetailsFromSP().get(ACCESS_TOKEN);
 
                 header.put("Accept", "application/json");
-                header.put("Authorization", tokenType + " " + accessToken);*/
+                header.put("Authorization", tokenType + " " + accessToken);
 
                 return super.getHeaders();
             }
@@ -264,6 +337,8 @@ public class Checkout extends AppCompatActivity implements View.OnClickListener,
                 params.put("quantity", quantity);
                 params.put("total_price", total);
                 params.put("partner_id", partnerId);
+                params.put("payment_method",paymentMethod);
+                params.put("order_id",generatedOrderId);
 
                 return params;
             }

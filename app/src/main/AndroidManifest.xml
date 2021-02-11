@@ -81,6 +81,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/map_api" />
+        <meta-data
+            android:name="com.razorpay.ApiKey"
+            android:value="rzp_test_rP8aa88ijSDIV4" />
 
         <service
             android:name=".notification.FirebaseMessaging"
