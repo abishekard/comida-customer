@@ -52,10 +52,11 @@ public class OrderDetails extends AppCompatActivity {
     private ImageView shopImageView;
     private RecyclerView foodRecyclerView;
     private String orderId;
-    private String shopName,shopAddress,shopImage,speciality,partnerId,status,addressType,deliveredAddress;
+    private String shopName,shopAddress,shopImage,speciality,partnerId,status,addressType,deliveredAddress,otp;
     private List<OrderFoodModel> foodList;
     private int total=0,Isubtotal=0,Idiscount=0;
     private Button btnDone;
+    private TextView otpView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +86,8 @@ public class OrderDetails extends AppCompatActivity {
         addressView = findViewById(R.id.delivered_address);
         orderIdView = findViewById(R.id.order_id);
         btnDone = findViewById(R.id.btn_done);
+        otpView = findViewById(R.id.otp_view);
+
         btnTrackOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,6 +106,7 @@ public class OrderDetails extends AppCompatActivity {
         if(from.equals("history"))
         {
             btnTrackOrder.setVisibility(View.GONE);
+            otpView.setVisibility(View.GONE);
         }
 
         fetchOrderDetail();
@@ -138,6 +142,8 @@ public class OrderDetails extends AppCompatActivity {
                     shopImage = jsonObject.getString("shop_image");
                     shopAddress = jsonObject.getString("shop_address");
                     status = jsonObject.getString("status");
+                    otp = jsonObject.getString("otp");
+
 
 
                         for(int i=0;i<subJson.length();i++)
@@ -218,6 +224,7 @@ public class OrderDetails extends AppCompatActivity {
 
         shopNameView.setText(shopName);
         specialityView.setText(speciality);
+        otpView.setText("OTP : "+otp);
         shopAddressView.setText(shopAddress);
         Picasso.get().load(BASE_IMAGE+shopImage).into(shopImageView);
         addressTypeView.setText(addressType);

@@ -25,6 +25,7 @@ import com.abishek.comida.cart.cartRoom.CartDaoAccess;
 import com.abishek.comida.cart.cartRoom.ComidaDatabase;
 import com.abishek.comida.cart.dialog.ClearCartForNewRestaurant;
 import com.abishek.comida.home.product.FoodModel;
+import com.abishek.comida.home.product.GoToCartListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -41,14 +42,18 @@ public class ProductChildAdapter extends RecyclerView.Adapter<ProductChildAdapte
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
     private int currentPid;
+    private GoToCartListener goToCartListener;
 
-    public ProductChildAdapter(ArrayList<FoodModel> foodList, Context context,String currentPid) {
+
+    public ProductChildAdapter(ArrayList<FoodModel> foodList, Context context,String currentPid,GoToCartListener goToCartListener) {
         this.foodList = foodList;
         this.context = context;
         this.currentPid = Integer.parseInt(currentPid);
         new FetchCartItems(ComidaDatabase.getDatabase(context)).execute();
         pref = context.getSharedPreferences("partner_info", 0);
         editor = pref.edit();
+
+        this.goToCartListener=goToCartListener;
 
     }
 
@@ -107,6 +112,7 @@ public class ProductChildAdapter extends RecyclerView.Adapter<ProductChildAdapte
                     holder.quantityLayout.setVisibility(View.VISIBLE);
 
                     new InsertCartItems(ComidaDatabase.getDatabase(context), foodList.get(position)).execute();
+                    goToCartListener.itemAdded(Integer.parseInt(foodList.get(position).getPrice()));
                     ///  new FetchCartItems(ComidaDatabase.getDatabase(context)).execute();
                 }
             }
@@ -121,6 +127,7 @@ public class ProductChildAdapter extends RecyclerView.Adapter<ProductChildAdapte
                     Log.e(TAG, "afterI_qty: " + qty);
                     new InsertQuantity(ComidaDatabase.getDatabase(context), qty,
                             Integer.parseInt(foodList.get(position).getProductId())).execute();
+                    goToCartListener.increased(Integer.parseInt(foodList.get(position).getPrice()));
                 }
             }
         });
@@ -133,6 +140,7 @@ public class ProductChildAdapter extends RecyclerView.Adapter<ProductChildAdapte
                     Log.e(TAG, "afterD_qty: " + qty);
                     new InsertQuantity(ComidaDatabase.getDatabase(context), qty,
                             Integer.parseInt(foodList.get(position).getProductId())).execute();
+                    goToCartListener.decreased(Integer.parseInt(foodList.get(position).getPrice()));
                 }
             }
         });
@@ -275,6 +283,7 @@ public class ProductChildAdapter extends RecyclerView.Adapter<ProductChildAdapte
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
+            goToCartListener.cartClear();
             editor.putInt("pid",currentPid);
             editor.apply();
 

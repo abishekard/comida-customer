@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:gravity="center_vertical"
         android:layout_marginBottom="10dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <ImageView
@@ -57,15 +57,12 @@
                 android:orientation="horizontal">
 
 
-
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/shop_image"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        app:shapeAppearanceOverlay="@style/roundedCornerImageView"
-                        android:src="@mipmap/sample2" />
-
-
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/shop_image"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@mipmap/sample2"
+                    app:shapeAppearanceOverlay="@style/roundedCornerImageView" />
 
 
                 <LinearLayout
@@ -127,14 +124,34 @@
                     android:layout_marginTop="10dp"
                     android:text="Delivery Address" />
 
-                <TextView
-                    android:id="@+id/address_type"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
                     android:layout_marginTop="10dp"
-                    android:text="address type"
-                    android:textSize="12sp" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/address_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+
+                        android:text="address type"
+                        android:textSize="12sp" />
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+                    <TextView
+                        android:id="@+id/otp_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="OTP : 1234"
+                        android:textSize="12sp"
+                        android:layout_marginEnd="10dp"
+                        />
+                </LinearLayout>
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -159,6 +176,7 @@
 
                 </LinearLayout>
             </LinearLayout>
+
 
             <Button
                 android:id="@+id/track_order"
@@ -208,6 +226,7 @@
                     android:layout_height="wrap_content"
                     android:text="₹ "
                     android:textStyle="bold" />
+
                 <TextView
                     android:id="@+id/sub_total"
                     android:layout_width="wrap_content"
@@ -242,6 +261,7 @@
                     android:text="- ₹ "
                     android:textColor="@color/green"
                     android:textStyle="bold" />
+
                 <TextView
                     android:id="@+id/discount"
                     android:layout_width="wrap_content"
@@ -276,6 +296,7 @@
                     android:layout_height="wrap_content"
                     android:text="₹ "
                     android:textStyle="bold" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -316,6 +337,7 @@
                     android:layout_height="wrap_content"
                     android:text="₹ "
                     android:textStyle="bold" />
+
                 <TextView
                     android:id="@+id/total"
                     android:layout_width="wrap_content"

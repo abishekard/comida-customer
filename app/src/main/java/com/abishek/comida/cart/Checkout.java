@@ -74,7 +74,7 @@ public class Checkout extends AppCompatActivity implements View.OnClickListener,
         setContentView(R.layout.activity_checkout);
 
         paymentMethod = "online";
-        generatedOrderId = System.currentTimeMillis() / 10L + "";
+        generatedOrderId = System.currentTimeMillis() + "";
         Log.e(TAG,"generatedOrderId  "+generatedOrderId);
 
         btnConfirm = findViewById(R.id.btn_confirm_order);

@@ -1,17 +1,26 @@
 package com.abishek.comida.home.product;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.abishek.comida.R;
 import com.abishek.comida.address.AddNewAddress;
+import com.abishek.comida.cart.CartHome;
+import com.abishek.comida.cart.cartRoom.CartDaoAccess;
+import com.abishek.comida.cart.cartRoom.ComidaDatabase;
+import com.abishek.comida.commonFiles.LoginSessionManager;
 import com.abishek.comida.commonFiles.MySingleton;
 import com.abishek.comida.home.adapters.ProductParentAdapter;
 import com.android.volley.AuthFailureError;
@@ -26,7 +35,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE;
@@ -35,26 +48,31 @@ import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_PR
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.NO_OF_RETRY;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.RETRY_SECONDS;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.isNetworkAvailable;
+import static com.abishek.comida.commonFiles.LoginSessionManager.ACCESS_TOKEN;
+import static com.abishek.comida.commonFiles.LoginSessionManager.TOKEN_TYPE;
 
 public class ShopProductDetail extends AppCompatActivity {
 
-    private static final String TAG ="ShopProductDetails" ;
+    private static final String TAG = "ShopProductDetails";
 
     private ArrayList<CategoryModel> categoryList;
     private RecyclerView categoryRecycler;
-    private String shopName,address,rating,openTime,closeTime,shopImage,speciality,partnerId;
-    private TextView shopNameV,specialityV,shopAddressV,itemCountV;
-    private ImageView shopImageV;
-
+    private String shopName, address, rating, openTime, closeTime, available, shopImage, speciality, partnerId;
+    private TextView shopNameV, specialityV, shopAddressV, itemCountV, ratingV;
+    private ImageView shopImageV, availability;
+    private int itemCount;
+    private LinearLayout goTOCartLayout;
+    private TextView cartItemCount,cartTotalPrice,btnToCart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail_and_add);
 
-        if(!isNetworkAvailable(ShopProductDetail.this))
-        {
-            Toast.makeText(ShopProductDetail.this,"check your Internet connection",Toast.LENGTH_SHORT).show();
+        itemCount = 0;
+
+        if (!isNetworkAvailable(ShopProductDetail.this)) {
+            Toast.makeText(ShopProductDetail.this, "check your Internet connection", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -65,18 +83,34 @@ public class ShopProductDetail extends AppCompatActivity {
         shopNameV = findViewById(R.id.shop_name);
         shopAddressV = findViewById(R.id.shop_address);
         specialityV = findViewById(R.id.speciality);
-        itemCountV =findViewById(R.id.item_count);
+        itemCountV = findViewById(R.id.item_count);
+        ratingV = findViewById(R.id.rating_view);
         shopImageV = findViewById(R.id.shop_image);
+        availability = findViewById(R.id.availability);
+        goTOCartLayout = findViewById(R.id.go_to_cart_layout);
+
+        cartItemCount = findViewById(R.id.cart_item_count);
+        cartTotalPrice = findViewById(R.id.cart_total_price);
+        btnToCart = findViewById(R.id.to_cart);
+
+        btnToCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ShopProductDetail.this, CartHome.class));
+                finish();
+            }
+        });
+
+        new FetchCartItems(ComidaDatabase.getDatabase(ShopProductDetail.this)).execute();
         fetchProductList();
     }
 
-    public void fetchProductList()
-    {
+    public void fetchProductList() {
 
 
         Log.e(TAG, "fetchCategory : called");
 
-        final String URL = BASE_PRODUCT_CATEGORY+partnerId;
+        final String URL = BASE_PRODUCT_CATEGORY + partnerId;
 
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -96,29 +130,31 @@ public class ShopProductDetail extends AppCompatActivity {
                     address = jsonObject.getString("address");
                     closeTime = jsonObject.getString("close_time");
                     speciality = jsonObject.getString("speciality");
-                    for(int i=0;i<subJson.length();i++)
-                    {
+                    available = jsonObject.getString("available");
+                    rating = jsonObject.getString("rating");
+
+                    for (int i = 0; i < subJson.length(); i++) {
                         String categoryName = subJson.getJSONObject(i).getString("category_name");
                         JSONArray childArray = subJson.getJSONObject(i).getJSONArray("category_data");
-                        ArrayList<FoodModel> foodList= new ArrayList<>();
-                        for(int j=0;j<childArray.length();j++)
-                        {
+                        ArrayList<FoodModel> foodList = new ArrayList<>();
+                        for (int j = 0; j < childArray.length(); j++) {
+                            ++itemCount;
                             JSONObject childJson = childArray.getJSONObject(j);
-                            String productId =childJson.getString("id");
-                            String itemName=childJson.getString("item_name");
+                            String productId = childJson.getString("id");
+                            String itemName = childJson.getString("item_name");
                             String itemImage = childJson.getString("item_image");
                             String price = childJson.getString("price");
-                            String priceType=childJson.getString("price_type");
-                            String discount=childJson.getString("discount");
-                            String vegNonVeg=childJson.getString("veg_non_veg");
-                            String category=childJson.getString("category");
+                            String priceType = childJson.getString("price_type");
+                            String discount = childJson.getString("discount");
+                            String vegNonVeg = childJson.getString("veg_non_veg");
+                            String category = childJson.getString("category");
 
-                            foodList.add(new FoodModel(productId,itemName,itemImage,price,priceType,discount,vegNonVeg,category));
+                            foodList.add(new FoodModel(productId, itemName, itemImage, price, priceType, discount, vegNonVeg, category));
 
                         }
 
 
-                        categoryList.add(new CategoryModel(categoryName,foodList));
+                        categoryList.add(new CategoryModel(categoryName, foodList));
 
                     }
 
@@ -137,23 +173,21 @@ public class ShopProductDetail extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, error.toString());
 
-                Toast.makeText(ShopProductDetail.this,"server problem",Toast.LENGTH_SHORT).show();
+                Toast.makeText(ShopProductDetail.this, "server problem", Toast.LENGTH_SHORT).show();
 
             }
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                /*Map<String, String> header = new HashMap<>();
+                Map<String, String> header = new HashMap<>();
 
-                String tokenType = new LoginSessionManager(getContext()).getUserDetailsFromSP().get(TOKEN_TYPE);
-                String accessToken = new LoginSessionManager(getContext()).getUserDetailsFromSP().get(ACCESS_TOKEN);
-
-                //String fullKey = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjcxNDdmNGFjNWFlN2IzZDM4MmYyNTAwNWVhNTIwOGUyNDAzNjYwNzMyOWMyYjZiYWQ1YTlhMmNlZTEzZDI3ZTgzN2RkOTY5NzcxNWNhMzUxIn0.eyJhdWQiOiIxIiwianRpIjoiNzE0N2Y0YWM1YWU3YjNkMzgyZjI1MDA1ZWE1MjA4ZTI0MDM2NjA3MzI5YzJiNmJhZDVhOWEyY2VlMTNkMjdlODM3ZGQ5Njk3NzE1Y2EzNTEiLCJpYXQiOjE1NTExOTc0MjcsIm5iZiI6MTU1MTE5NzQyNywiZXhwIjoxNTgyNzMzNDI3LCJzdWIiOiI4NSIsInNjb3BlcyI6W119.kLmk7mEukKdoS9e_v31VQX29ypn7hJb7qAJvKA_GqeiYEYe2EQ9zLTd1IwO-S31CofoypnJ-LvAT7D4I0EZ9iYM1AS5A6-7bWH3-h01-glLQubbfedhvlg0xfT60s2r1onxlEMUnt-0kB2tbYgX_df4zJPExUhHRpzlnLNChzC3r1QD1dzgn-814GjxlQkwfgv_5dsKzyMlvVCHiTDg2z35h2uiWeRuVhmznbUGaGCWcxPwHpNV4k9pHOH9yrCwkjJuHlcSIiXD7W_QsRnzEa_dY6wASdymtGqHb99c3kfWmiKKwngAC9GY56OeMP0vLnYpXOAspu5rDlQkLCzCeh58KnqbqMUrQ0bZ3ChTaeATXM_fncQiByfMgAAfiVfu8GpKsnQKSYobzcqrqjmAgPTNEcq5ba4BCUuw1ysv0LodTqHGUHsSNsiZfx3GyqLoyOCMWY5oWO4M4saOTo3pUSGPSq15BsqRQXqbvzshxk9ysaAU1K9dZj-AZpy4mUxf3y4UX8-EADqJmYV7ywEph_FveDbdWNNUF72bqbTg8DTxwJ6V53cEOsxbmNb82jFJnz1vSxLFDDXv9Vvf23W5hm4Io2Ogxv8wyE5vNUgL2XepFrGwWWANEsp4fLebzfgFD3045vkrcfRPc164LVKHdLyaHhxB8TrYeK9TOqeEfk7M";
+                String tokenType = new LoginSessionManager(ShopProductDetail.this).getUserDetailsFromSP().get(TOKEN_TYPE);
+                String accessToken = new LoginSessionManager(ShopProductDetail.this).getUserDetailsFromSP().get(ACCESS_TOKEN);
 
                 header.put("Accept", "application/json");
-                header.put("Authorization", tokenType + " " + accessToken);*/
+                header.put("Authorization", tokenType + " " + accessToken);
 
-                return super.getHeaders();
+                return header;
             }
 
             @Override
@@ -172,11 +206,33 @@ public class ShopProductDetail extends AppCompatActivity {
 
     }
 
-    private void setDataToView()
-    {
+    private void setDataToView() {
         categoryRecycler = findViewById(R.id.category_recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShopProductDetail.this);
-        ProductParentAdapter productParentAdapter = new ProductParentAdapter(categoryList,ShopProductDetail.this,partnerId);
+        ProductParentAdapter productParentAdapter = new ProductParentAdapter(categoryList,
+                ShopProductDetail.this, partnerId, new GoToCartListener() {
+            @Override
+            public void itemAdded(int price) {
+
+                setBottomCartAdd(price);
+            }
+
+            @Override
+            public void increased(int price) {
+
+                setCartIncrement(price);
+            }
+
+            @Override
+            public void decreased(int price) {
+                 setCartDecrement(price);
+            }
+
+            @Override
+            public void cartClear() {
+                goTOCartLayout.setVisibility(View.GONE);
+            }
+        });
         categoryRecycler.setAdapter(productParentAdapter);
         categoryRecycler.setLayoutManager(linearLayoutManager);
         productParentAdapter.notifyDataSetChanged();
@@ -184,12 +240,106 @@ public class ShopProductDetail extends AppCompatActivity {
         shopNameV.setText(shopName);
         shopAddressV.setText(address);
         specialityV.setText(speciality);
-        Picasso.get().load(BASE_IMAGE+shopImage).into(shopImageV);
-        Log.e(TAG,".........."+BASE+shopImage);
+        Picasso.get().load(BASE_IMAGE + shopImage).into(shopImageV);
+
+        if (available.equals("1"))
+            availability.setImageDrawable(ContextCompat.getDrawable(ShopProductDetail.this, R.drawable.ic_open_tag));
+        else {
+            availability.setImageDrawable(ContextCompat.getDrawable(ShopProductDetail.this, R.drawable.ic_close_tag));
+
+        }
+        ratingV.setText(rating);
+        itemCountV.setText(itemCount + "");
+
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+
+        String currentTime = sdf.format(cal.getTime());
+        Log.e(TAG, "........." + currentTime);
+        String currHrs[] = currentTime.split(":");
+        Log.e(TAG, "........." + Integer.parseInt(currHrs[0]));
+
+        String cloTime[] = closeTime.split(":");
+        Log.e(TAG, "........." + Integer.parseInt(cloTime[0]));
+
+        String opnTime[] = openTime.split(":");
+        Log.e(TAG, "........." + Integer.parseInt(opnTime[0]));
+
+        if (Integer.parseInt(currHrs[0]) > Integer.parseInt(cloTime[0]) || Integer.parseInt(currHrs[0]) < Integer.parseInt(opnTime[0])) {
+            availability.setImageDrawable(ContextCompat.getDrawable(ShopProductDetail.this, R.drawable.ic_close_tag));
+        }
 
     }
 
+    public void setBottomCart(int count,int price)
+    {
+        goTOCartLayout.setVisibility(View.VISIBLE);
+        cartItemCount.setText(count+"");
+        cartTotalPrice.setText(price+"");
+
+    }
+    public void setBottomCartAdd(int price)
+    {
+         if(goTOCartLayout.getVisibility()==View.VISIBLE)
+         {
+             int itemCount= Integer.parseInt(cartItemCount.getText().toString());
+             int tPrice = Integer.parseInt(cartTotalPrice.getText().toString());
+             tPrice = tPrice+price;
+             ++itemCount;
+             cartItemCount.setText(itemCount+"");
+             cartTotalPrice.setText(tPrice+"");
+         }
+         else {
+             setBottomCart(1,price);
+         }
+    }
+    public void setCartIncrement(int price)
+    {
+
+        int tPrice = Integer.parseInt(cartTotalPrice.getText().toString());
+        tPrice = tPrice+price;
+        cartTotalPrice.setText(tPrice+"");
+    }
+
+    public void setCartDecrement(int price)
+    {
+        int tPrice = Integer.parseInt(cartTotalPrice.getText().toString());
+        tPrice = tPrice-price;
+        cartTotalPrice.setText(tPrice+"");
+    }
+
+
+    class FetchCartItems extends AsyncTask<Void, Void, Void> {
+
+        private final CartDaoAccess cartDao;
+        private List<FoodModel> cartFoodList;
+
+        public FetchCartItems(ComidaDatabase instance) {
+            cartDao = instance.getDaoAccess();
+            cartFoodList = new ArrayList<>();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            cartFoodList = cartDao.getFoodList();
 
 
 
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            int total=0;
+            for (FoodModel food:cartFoodList) {
+
+                total=total+Integer.parseInt(food.getPrice());
+            }
+            if(cartFoodList.size()>0)
+            setBottomCart(cartFoodList.size(),total);
+
+
+        }
+    }
 }
