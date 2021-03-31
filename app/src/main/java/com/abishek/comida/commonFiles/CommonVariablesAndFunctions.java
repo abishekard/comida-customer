@@ -35,6 +35,8 @@ public class CommonVariablesAndFunctions {
     public static final String BASE_NEW_ORDER = BASE+"orders/new/";
     public static final String BASE_COMPLETE_ORDER = BASE+"orders/completed/";
     public static final String BASE_ORDER_DETAIL = BASE+"order/detail/";
+    public static final String BASE_PARTNER_AVAILABLE = "http://androasu.in/comida/api/partner/available";
+
 
 
 

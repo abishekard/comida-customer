@@ -184,7 +184,9 @@ public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallba
                     progressBar.setVisibility(View.VISIBLE);
                     try {
                         List<Address> addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+
                         if (addressList != null && addressList.size() > 0) {
+                            Log.e(TAG,addressList.toString());
                             locality = addressList.get(0).getAddressLine(0);
                             country = addressList.get(0).getCountryName();
                             state = addressList.get(0).getAdminArea();
@@ -503,6 +505,11 @@ public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallba
             Toast.makeText(AddNewAddress.this,"address type already exists",Toast.LENGTH_SHORT).show();
             return;
         }
+        if(locality_city == null)
+        {
+            Toast.makeText(AddNewAddress.this,"unable to detect city.\nPlease try another address.",Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         saveAddressToDatabase();
     }
@@ -549,6 +556,7 @@ public class AddNewAddress extends AppCompatActivity implements OnMapReadyCallba
                 Log.e(TAG, error.toString());
 
                 Toast.makeText(AddNewAddress.this,"server problem",Toast.LENGTH_SHORT).show();
+                btnSave.setEnabled(true);
 
             }
         }) {
