@@ -129,7 +129,7 @@
                         android:id="@+id/rating_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="4.7" />
+                        android:text="5" />
                 </LinearLayout>
 
                 <Space
@@ -184,6 +184,27 @@
                 android:id="@+id/category_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp" />
+
+            <TextView
+                android:id="@+id/review_heading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Customer's Review"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="20dp"
+                android:background="@color/quantum_grey300"
+                android:padding="10dp"
+                android:visibility="gone"
+                />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/review_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:layout_marginBottom="20dp" />
 
             <!--   <include layout="@layout/shop_food_child_item"/>-->

@@ -60,6 +60,8 @@ dependencies {
 
     implementation 'com.razorpay:checkout:1.5.13'
 
+    implementation 'com.stepstone.apprating:app-rating:2.3.1'
+
 
 
 }

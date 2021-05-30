@@ -5,6 +5,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,6 +24,8 @@ import com.abishek.comida.cart.cartRoom.ComidaDatabase;
 import com.abishek.comida.commonFiles.LoginSessionManager;
 import com.abishek.comida.commonFiles.MySingleton;
 import com.abishek.comida.home.adapters.ProductParentAdapter;
+import com.abishek.comida.review.ReviewAdapter;
+import com.abishek.comida.review.ReviewModel;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -43,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE;
+import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_GET_PARTNER_REVIEW;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_IMAGE;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.BASE_PRODUCT_CATEGORY;
 import static com.abishek.comida.commonFiles.CommonVariablesAndFunctions.NO_OF_RETRY;
@@ -56,13 +60,17 @@ public class ShopProductDetail extends AppCompatActivity {
     private static final String TAG = "ShopProductDetails";
 
     private ArrayList<CategoryModel> categoryList;
-    private RecyclerView categoryRecycler;
+    private RecyclerView categoryRecycler,reviewRecyclerView;
     private String shopName, address, rating, openTime, closeTime, available, shopImage, speciality, partnerId;
     private TextView shopNameV, specialityV, shopAddressV, itemCountV, ratingV;
     private ImageView shopImageV, availability;
     private int itemCount;
     private LinearLayout goTOCartLayout;
     private TextView cartItemCount,cartTotalPrice,btnToCart;
+    private ArrayList<ReviewModel> reviewList;
+    private TextView reviewHeading;
+    private float totalRating=0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +96,8 @@ public class ShopProductDetail extends AppCompatActivity {
         shopImageV = findViewById(R.id.shop_image);
         availability = findViewById(R.id.availability);
         goTOCartLayout = findViewById(R.id.go_to_cart_layout);
+        reviewRecyclerView = findViewById(R.id.review_recycler_view);
+        reviewHeading = findViewById(R.id.review_heading);
 
         cartItemCount = findViewById(R.id.cart_item_count);
         cartTotalPrice = findViewById(R.id.cart_total_price);
@@ -103,12 +113,18 @@ public class ShopProductDetail extends AppCompatActivity {
 
         new FetchCartItems(ComidaDatabase.getDatabase(ShopProductDetail.this)).execute();
         fetchProductList();
+        fetchReview();
     }
 
     public void fetchProductList() {
 
 
         Log.e(TAG, "fetchCategory : called");
+
+        ProgressDialog progressDialog = new ProgressDialog(ShopProductDetail.this);
+        progressDialog.setMessage("Loading..");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
         final String URL = BASE_PRODUCT_CATEGORY + partnerId;
 
@@ -153,6 +169,7 @@ public class ShopProductDetail extends AppCompatActivity {
 
                         }
 
+                        progressDialog.dismiss();
 
                         categoryList.add(new CategoryModel(categoryName, foodList));
 
@@ -164,6 +181,7 @@ public class ShopProductDetail extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Log.e(TAG, e.toString());
+                    progressDialog.dismiss();
                 }
 
 
@@ -173,6 +191,7 @@ public class ShopProductDetail extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, error.toString());
 
+                progressDialog.dismiss();
                 Toast.makeText(ShopProductDetail.this, "server problem", Toast.LENGTH_SHORT).show();
 
             }
@@ -248,7 +267,7 @@ public class ShopProductDetail extends AppCompatActivity {
             availability.setImageDrawable(ContextCompat.getDrawable(ShopProductDetail.this, R.drawable.ic_close_tag));
 
         }
-        ratingV.setText(rating);
+     //   ratingV.setText(rating);
         itemCountV.setText(itemCount + "");
 
         Calendar cal = Calendar.getInstance();
@@ -341,5 +360,111 @@ public class ShopProductDetail extends AppCompatActivity {
 
 
         }
+    }
+
+
+    public void fetchReview() {
+
+
+        Log.e(TAG, "fetchReview : called");
+
+        final String URL = BASE_GET_PARTNER_REVIEW;
+
+        totalRating=0;
+
+         reviewList  = new ArrayList<>();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.e(TAG, response);
+
+
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    JSONArray jsonArray = jsonObject.getJSONArray("data");
+
+                    if(jsonArray.length()==0)
+                    {
+                        return;
+                    }
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+
+                        JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+
+                      String userId=jsonObject1.getString("user_id");
+                      String partnerId=jsonObject1.getString("partner_id");
+                      String orderId = jsonObject1.getString("order_id");
+                      String comment = jsonObject1.getString("comment");
+                      String rating = jsonObject1.getString("rating");
+                      String createdAt = jsonObject1.getString("created_at");
+                      String customerName = jsonObject1.getString("customer_name");
+                      String customerImage= jsonObject1.getString("customer_image");
+
+                       totalRating = totalRating + Integer.parseInt(rating);
+
+
+                       reviewList.add(new ReviewModel(userId,partnerId,orderId,comment,rating,createdAt,customerName,customerImage));
+
+                    }
+
+                    reviewRecyclerView.setVisibility(View.VISIBLE);
+                    reviewHeading.setVisibility(View.VISIBLE);
+
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShopProductDetail.this);
+                    linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
+                    ReviewAdapter reviewAdapter = new ReviewAdapter(reviewList,ShopProductDetail.this);
+                    reviewRecyclerView.setLayoutManager(linearLayoutManager);
+                    reviewRecyclerView.setAdapter(reviewAdapter);
+                    reviewAdapter.notifyDataSetChanged();
+                    ratingV.setText((totalRating/jsonArray.length())+"");
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.toString());
+                }
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, error.toString());
+
+                Toast.makeText(ShopProductDetail.this, "server problem", Toast.LENGTH_SHORT).show();
+
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> header = new HashMap<>();
+
+                String tokenType = new LoginSessionManager(ShopProductDetail.this).getUserDetailsFromSP().get(TOKEN_TYPE);
+                String accessToken = new LoginSessionManager(ShopProductDetail.this).getUserDetailsFromSP().get(ACCESS_TOKEN);
+
+                header.put("Accept", "application/json");
+                header.put("Authorization", tokenType + " " + accessToken);
+
+                return header;
+            }
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                HashMap<String,String> params = new HashMap<>();
+                params.put("partner_id",partnerId);
+
+                return params;
+            }
+
+        };
+
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy((RETRY_SECONDS),
+                NO_OF_RETRY, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        MySingleton.getInstance(ShopProductDetail.this).addToRequestQueue(stringRequest);
+
+
     }
 }
